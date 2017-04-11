@@ -22,6 +22,7 @@ import Theme               from '../theme';
 import App                 from '../app';
 import Lang                from 'Lang';
 import Helper              from 'Helper';
+import {ws, connect, login, sendMessage} from '../websocket-test';
 
 const STYLE = {
     login: {
@@ -303,7 +304,7 @@ const Login = React.createClass({
             }
         });
         if(DEBUG) {
-            this.handleSubmitClick();
+            // this.handleSubmitClick();
         }
     },
 
