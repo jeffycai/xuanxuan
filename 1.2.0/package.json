@@ -1,0 +1,15 @@
+{
+  "name": "xuanxuan",
+  "productName": "喧喧",
+  "version": "1.2.0",
+  "description": "企业即时通讯平台",
+  "main": "./main.js",
+  "author": {
+    "name": "cnezsoft",
+    "email": "sunhao@cnezsoft.com",
+    "url": "http://cnezsoft.com"
+  },
+  "homepage": "http://xuan.im",
+  "company": "青岛易软天创网络科技有限公司",
+  "license": "ZPL 1.2"
+}
