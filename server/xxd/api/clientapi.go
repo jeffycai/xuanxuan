@@ -121,6 +121,7 @@ func TestLogin() []byte {
 	return message
 }
 
+// 除登录和退出的数据中转.
 func TransitData(clientData []byte, serverName string) ([]byte, []int64, error) {
 	ranzhiServer, ok := RanzhiServer(serverName)
 	if !ok {
@@ -191,6 +192,22 @@ func UserGetlist(serverName string, userID int64) ([]byte, error) {
 	return retData, nil
 }
 
+func UserFileSessionID(serverName string, userID int64) ([]byte , error) {
+    sessionID := util.GetMD5( serverName + util.Int642String(userID) + util.Int642String(util.GetUnixTime()) )
+    sessionData := []byte(`{"module":"chat","method":"SessionID","sessionID":"` + sessionID + `"}`)
+
+    //将sessionID 存入公共空间
+    util.CreatUid(serverName, userID,sessionID)
+
+    sessionData, err := aesEncrypt(sessionData, util.Token)
+    if err != nil {
+        util.LogError().Println("aes encrypt error:", err)
+        return nil, err
+    }
+
+    return sessionData , nil
+}
+
 func Getlist(serverName string, userID int64) ([]byte, error) {
 	ranzhiServer, ok := RanzhiServer(serverName)
 	if !ok {
@@ -256,6 +273,7 @@ func GetofflineMessages(serverName string, userID int64) ([]byte, error) {
 	return retData, nil
 }
 
+// 与客户端间的错误通知
 func RetErrorMsg(errCode, errMsg string) ([]byte, error) {
 	errApi := `{"module":"chat","method":"error","code":` + errCode + `,"message":"` + errMsg + `"}`
 	message, err := aesEncrypt([]byte(errApi), util.Token)
@@ -267,6 +285,7 @@ func RetErrorMsg(errCode, errMsg string) ([]byte, error) {
 	return message, nil
 }
 
+// 获取然之服务器名称
 func RanzhiServer(serverName string) (util.RanzhiServer, bool) {
 	if serverName == "" {
 		info, ok := util.Config.RanzhiServer[util.Config.DefaultServer]

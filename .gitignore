@@ -39,9 +39,8 @@ app/bundle.js
 app/bundle.js.map
 app/style.css
 app/style.css.map
-dist
-main.js
-main.js.map
+app/dist
+app/web-dist
 
 # User custom files
 *.custom
@@ -52,3 +51,10 @@ main.js.map
 # backyard settings
 server/db/upgradebackyard.sql
 server/xxd/certificate
+
+# documentation
+docs
+issues.md
+
+# xxd tmp files
+server/xxd/tmpfile

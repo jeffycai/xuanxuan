@@ -44,20 +44,11 @@ var upgrader = websocket.Upgrader{
 
 // Client is a middleman between the websocket connection and the hub.
 type Client struct {
-	hub *Hub
-
-	// The websocket connection.
-	conn *websocket.Conn
-
-	// Buffered channel of outbound messages.
-	send chan []byte
-
-	// User server
-	serverName string
-
-	// Send to user id
-	userID int64
-
+	hub         *Hub
+	conn        *websocket.Conn // The websocket connection.
+	send        chan []byte     // Buffered channel of outbound messages.
+	serverName  string          // User server
+	userID      int64           // Send to user id
 	repeatLogin bool
 }
 
@@ -68,8 +59,7 @@ type ClientRegister struct {
 
 // send message struct
 type SendMsg struct {
-	// send ranzhi server name
-	serverName string
+	serverName string // send ranzhi server name
 	usersID    []int64
 	message    []byte
 }
@@ -101,9 +91,9 @@ func switchMethod(message []byte, parseData api.ParseData, client *Client) error
 	case "chat.logout":
 		client.conn.Close()
 		/*
-			if err := chatLogout(parseData.UserID(), client); err != nil {
-				return err
-			}
+		   if err := chatLogout(parseData.UserID(), client); err != nil {
+		       return err
+		   }
 		*/
 		break
 
@@ -138,6 +128,16 @@ func chatLogin(parseData api.ParseData, client *Client) error {
 	if client.serverName == "" {
 		client.serverName = util.Config.DefaultServer
 	}
+
+	// 生成并存储文件会员
+    userFileSessionID , err := api.UserFileSessionID(client.serverName, client.userID)
+    if err != nil {
+        util.LogError().Println("chat user get user list error:", err)
+        //返回给客户端登录失败的错误信息
+        return err
+    }
+    // 成功后返回userFileSessionID数据给客户端
+    client.send <- userFileSessionID
 
 	// 获取所有用户列表
 	usergl, err := api.UserGetlist(client.serverName, client.userID)
@@ -197,7 +197,7 @@ func chatLogout(userID int64, client *Client) error {
 	if err != nil {
 		return err
 	}
-
+  util.DelUid(client.serverName,util.Int642String(client.userID))
 	return X2cSend(client.serverName, sendUsers, x2cMessage, client)
 }
 
@@ -242,8 +242,7 @@ func (c *Client) readPump() {
 	defer func() {
 		c.hub.unregister <- c
 		c.conn.Close()
-		// user logout
-		chatLogout(c.userID, c)
+		chatLogout(c.userID, c) // user logout
 	}()
 
 	c.conn.SetReadLimit(maxMessageSize)
@@ -323,6 +322,9 @@ func (c *Client) writePump() {
 
 // serveWs handles websocket requests from the peer.
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+  // Delete origin header @see https://www.iphpt.com/detail/86/
+  r.Header.Del("Origin")
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		util.LogError().Println("serve ws upgrader error:", err)
@@ -373,5 +375,4 @@ func ownWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		util.LogError().Println("own ws token error")
 		return
 	}
-
 }

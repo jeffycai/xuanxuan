@@ -15,7 +15,7 @@ import (
 	"runtime"
 )
 
-const Version = "V1.1.1"
+const Version = "V1.2.0"
 
 var Run bool = true
 var IsTest bool = false
@@ -28,6 +28,7 @@ func init() {
 	flag.Parse()
 	IsTest = *isTest
 
+	// xxd 启动时根据时间生成token
 	timeStr := Int642String(GetUnixTime())
 	Token = []byte(GetMD5(timeStr))
 	if IsTest {
@@ -43,6 +44,7 @@ func init() {
 	LogInfo().Printf("sys start,version:%s, server test model is %v\n", Version, IsTest)
 	LogInfo().Printf("ProgramName:%s,System:%s-%s\n", GetProgramName(), runtime.GOOS, runtime.GOARCH)
 
+	// 设置 cpu 使用
 	runtime.GOMAXPROCS(runtime.NumCPU())
 }
 
