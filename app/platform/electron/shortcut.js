@@ -26,15 +26,19 @@ const unregisterGlobalShortcut = (name) => {
  */
 const registerGlobalShortcut = (name, accelerator, callback) => {
     unregisterGlobalShortcut(name);
-    shortcuts[name] = accelerator;
-    remote.globalShortcut.register(accelerator, () => {
+    if (accelerator) {
+        shortcuts[name] = accelerator;
+        remote.globalShortcut.register(accelerator, () => {
+            if (DEBUG) {
+                console.color(`GLOBAL KEY ACTIVE ${name}: ${accelerator}`, 'redOutline');
+            }
+            callback();
+        });
         if (DEBUG) {
-            console.color(`GLOBAL KEY ACTIVE ${name}: ${accelerator}`, 'redOutline');
+            console.color(`GLOBAL HOTKEY BIND ${name}: ${accelerator}`, 'purpleOutline');
         }
-        callback();
-    });
-    if (DEBUG) {
-        console.color(`GLOBAL HOTKEY BIND ${name}: ${accelerator}`, 'purpleOutline');
+    } else if (DEBUG) {
+        console.color(`GLOBAL HOTKEY BIND ${name}: error`, 'purpleOutline', 'Cannot bind empty accelerator', 'red');
     }
 };
 
