@@ -1,17 +1,16 @@
 import {remote} from 'electron';
 
-const Menu     = remote.Menu;
-const MenuItem = remote.MenuItem;
+const Menu = remote.Menu;
 
 const createContextMenu = menu => {
-    if(Array.isArray(menu) && !menu.popup) {
+    if (Array.isArray(menu) && !menu.popup) {
         menu = Menu.buildFromTemplate(menu);
     }
     return menu;
 };
 
 const popupContextMenu = (menu, x, y) => {
-    if(typeof x === 'object') {
+    if (typeof x === 'object') {
         y = x.clientY;
         x = x.clientX;
     }

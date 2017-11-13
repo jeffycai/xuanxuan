@@ -4,7 +4,7 @@ import timeSequence from '../utils/time-sequence';
 
 class InputControl extends Component {
     static defaultProps = {
-        label: '',
+        label: ' ',
         className: '',
         placeholder: '',
         autoFocus: false,
@@ -25,7 +25,7 @@ class InputControl extends Component {
 
     static propTypes = {
         defaultValue: PropTypes.string,
-        label: PropTypes.string,
+        label: PropTypes.any,
         className: PropTypes.string,
         placeholder: PropTypes.string,
         autoFocus: PropTypes.bool,
@@ -38,14 +38,15 @@ class InputControl extends Component {
         onChange: PropTypes.func,
         disabled: PropTypes.bool,
         inputClassName: PropTypes.string,
-        children: PropTypes.string,
+        children: PropTypes.any,
         name: PropTypes.string,
         value: PropTypes.string,
     }
 
     constructor(props) {
         super(props);
-        this.state = {value: this.props.defaultValue};
+        const {value, defaultValue} = props;
+        this.state = {value: (value !== null && value !== undefined) ? value : defaultValue};
         this.handleChange = this.handleChange.bind(this);
     }
 
@@ -110,7 +111,7 @@ class InputControl extends Component {
             <input
                 disabled={!!disabled}
                 ref={e => {this.input = e;}}
-                value={value !== undefined ? value : this.state.value}
+                value={value !== null ? value : this.state.value === null ? '' : this.state.value}
                 id={name}
                 type={inputType}
                 className={HTML.classes('input', inputClassName)}

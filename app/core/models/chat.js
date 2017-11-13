@@ -2,6 +2,7 @@ import Entity from './entity';
 import Status from '../../utils/status';
 import Lang from '../../lang';
 import Pinyin from '../../utils/pinyin';
+import { ChatMessage } from './index';
 
 const STATUS = new Status({
     local: 0,
@@ -55,6 +56,17 @@ class Chat extends Entity {
                 this.onStatusChange(newStatus, this);
             }
         };
+
+        this._maxMsgOrder = 0;
+    }
+
+    get maxMsgOrder() {
+        return this._maxMsgOrder;
+    }
+
+    newMsgOrder() {
+        this._maxMsgOrder += 1;
+        return this._maxMsgOrder;
     }
 
     ensureGid() {
@@ -529,6 +541,9 @@ class Chat extends Entity {
                 if (lastActiveTime < message.date) {
                     lastActiveTime = message.date;
                 }
+                if (message.order) {
+                    this._maxMsgOrder = Math.max(this._maxMsgOrder, message.order);
+                }
             } else if (DEBUG) {
                 console.warn('The message date is not defined.', message);
             }
@@ -537,16 +552,7 @@ class Chat extends Entity {
         this.noticeCount = noticeCount;
 
         if (newMessageCount) {
-            this._messages.sort((x, y) => {
-                let orderResult = x.date - y.date;
-                if (orderResult === 0) {
-                    orderResult = (x.id || Number.MAX_SAFE_INTEGER) - (y.id || Number.MAX_SAFE_INTEGER);
-                }
-                if (orderResult === 0) {
-                    orderResult = x.order - y.order;
-                }
-                return orderResult;
-            });
+            this._messages = ChatMessage.sort(this._messages);
         }
 
         if (limitSize && this._messages.length > MAX_MESSAGE_COUNT) {
@@ -609,11 +615,12 @@ class Chat extends Entity {
                 if (result !== 0) break;
                 if (typeof order === 'function') {
                     result = order(y, x);
-                    continue;
-                }
-                const isInverse = order[0] === '-';
-                if (isInverse) order = order.substr(1);
-                switch (order) {
+                } else {
+                    const isInverse = order[0] === '-';
+                    if (isInverse) order = order.substr(1);
+                    let xValue;
+                    let yValue;
+                    switch (order) {
                     case 'isSystem':
                     case 'hide':
                     case 'star':
@@ -625,7 +632,6 @@ class Chat extends Entity {
                         }
                         break;
                     default:
-                        let xValue, yValue;
                         if (order === 'name' && app) {
                             xValue = x.getDisplayName(app, false);
                             yValue = y.getDisplayName(app, false);
@@ -638,13 +644,14 @@ class Chat extends Entity {
                         }
                         if (xValue === undefined || xValue === null) xValue = 0;
                         if (yValue === undefined || yValue === null) yValue = 0;
-                        result = xValue > yValue ? 1 : (xValue == yValue ? 0 : -1);
+                        result = xValue > yValue ? 1 : (xValue === yValue ? 0 : -1);
+                    }
+                    result *= isInverse ? (-1) : 1;
                 }
-                result *= isInverse ? (-1) : 1;
             }
             return result * (isFinalInverse ? (-1) : 1);
         });
     }
- }
+}
 
 export default Chat;

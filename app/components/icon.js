@@ -25,7 +25,8 @@ export default class MDIcon extends Component {
         color: '',
         className: '',
         square: true,
-        style: null
+        style: null,
+        children: null
     };
 
     /**
@@ -36,7 +37,12 @@ export default class MDIcon extends Component {
      */
     static propTypes = {
         size: PropTypes.number,
-        style: PropTypes.object
+        style: PropTypes.object,
+        square: PropTypes.bool,
+        className: PropTypes.string,
+        color: PropTypes.string,
+        name: PropTypes.string,
+        children: PropTypes.any
     }
 
     /**
@@ -69,6 +75,14 @@ export default class MDIcon extends Component {
             style.height = style.fontSize;
             style.width = style.fontSize;
         }
-        return <i style={style} {...other} className={HTML.classes(`icon mdi mdi-${name}`, className)}>{children}</i>;
+        let iconName = '';
+        if (name.startsWith('mdi-')) {
+            iconName = `mdi ${name}`;
+        } else if (name.startsWith('icon-')) {
+            iconName = name;
+        } else {
+            iconName = `mdi mdi-${name}`;
+        }
+        return <i style={style} {...other} className={HTML.classes(`icon ${iconName}`, className)}>{children}</i>;
     }
 }

@@ -22,6 +22,7 @@ export default class Checkbox extends Component {
         className: null,
         inputProps: null,
         onChange: null,
+        children: null,
     }
 
     /**
@@ -36,6 +37,7 @@ export default class Checkbox extends Component {
         className: PropTypes.string,
         inputProps: PropTypes.object,
         onChange: PropTypes.func,
+        children: PropTypes.any,
     }
 
     /**
@@ -54,7 +56,7 @@ export default class Checkbox extends Component {
      * @memberof Checkbox
      */
     handleCheckboxChange = e => {
-        if(this.props.onChange) {
+        if (this.props.onChange) {
             this.props.onChange(e.target.checked, e);
         }
     };
@@ -66,7 +68,7 @@ export default class Checkbox extends Component {
      * @memberof Checkbox
      */
     render() {
-        let {
+        const {
             checked,
             label,
             children,

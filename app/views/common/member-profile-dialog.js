@@ -1,11 +1,10 @@
-import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react';
 import Modal from '../../components/modal';
 import App from '../../core';
 import MemberProfile from './member-profile';
 
 const show = (member, callback) => {
-    if(typeof member !== 'object') {
+    if (typeof member !== 'object') {
         member = App.members.get(member);
     }
     const modalId = `member-${member.id}`;
@@ -14,9 +13,7 @@ const show = (member, callback) => {
         id: modalId,
         headingClassName: 'dock-right dock-top',
         className: 'app-member-profile-dialog',
-        content: <MemberProfile member={member} onRequestClose={() => {
-            Modal.hide(modalId);
-        }}/>
+        content: <MemberProfile member={member} onRequestClose={() => (Modal.hide(modalId))} />
     }, callback);
 };
 

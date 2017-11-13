@@ -1,3 +1,6 @@
+import compareVersions from 'compare-versions';
+import Config from 'Config';
+import Platform from 'Platform';
 import Socket from '../../network/socket';
 import serverHandlers from './server-handlers';
 import profile from '../profile';
@@ -5,11 +8,8 @@ import API from '../../network/api';
 import notice from '../notice';
 import Events from '../events';
 import limitTimePromise from '../../utils/limit-time-promise';
-import compareVersions from 'compare-versions';
-import Config from 'Config';
-import Platform from 'Platform';
 
-const TIMEOUT = 20*1000;
+const TIMEOUT = 20 * 1000;
 
 const socket = new Socket();
 socket.setHandler(serverHandlers);
@@ -83,7 +83,7 @@ const login = (user) => {
         return Promise.resolve(user);
     }).catch(error => {
         user.endLogin(false);
-        Events.emit(EVENT.login, false, error);
+        Events.emit(EVENT.login, user, error);
         return Promise.reject(error);
     });
 };
@@ -108,11 +108,16 @@ const logout = () => {
     }
 };
 
+const changeRanzhiUserPassword = (oldPassword, newPassword) => {
+    return API.changeRanzhiUserPassword(profile.user, oldPassword, newPassword);
+};
+
 export default {
     login,
     logout,
     socket,
     onUserLogin,
     onUserLoginout,
-    changeUserStatus
+    changeUserStatus,
+    changeRanzhiUserPassword
 };

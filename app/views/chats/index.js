@@ -1,38 +1,49 @@
-import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
+import React, {Component, PropTypes} from 'react';
+import {Route, Redirect} from 'react-router-dom';
 import HTML from '../../utils/html-helper';
-import Config from 'Config';
 import Menu from './menu';
 import ChatsCacheView from './chats-cache';
 import App from '../../core';
-import {Route, Redirect} from 'react-router-dom';
 import ChatsDndContainer from './chats-dnd-container';
 
 class IndexView extends Component {
+    static propTypes = {
+        match: PropTypes.object.isRequired,
+        hidden: PropTypes.bool,
+        className: PropTypes.string,
+    };
+
+    static defaultProps = {
+        hidden: false,
+        className: null,
+    };
 
     render() {
         const {
+            hidden,
+            className,
             match
         } = this.props;
 
         App.im.ui.activeChat(match.params.id);
 
-        const menuWidth = HTML.rem(Config.ui['menu.width']);
-
-        return <div className="dock app-chats">
-            <Menu className="dock-left" filter={match.params.filterType} style={{width: menuWidth}}/>
-            <ChatsCacheView style={{left: menuWidth}} className="dock-right" filterType={match.params.filterType} chatId={match.params.id}>
-                <ChatsDndContainer className="dock"/>
+        return (<div className={HTML.classes('dock app-chats', className, {hidden})}>
+            <Menu className="dock-left" filter={match.params.filterType} />
+            <ChatsCacheView className="dock-right" filterType={match.params.filterType} chatId={match.params.id}>
+                <ChatsDndContainer className="dock" />
             </ChatsCacheView>
-            <Route path="/chats/:filterType" exact render={props => {
-                const activeChatId = App.im.ui.currentActiveChatId;
-                if(activeChatId) {
-                    return <Redirect to={`${props.match.url}/${activeChatId}`}/>
-                } else {
+            <Route
+                path="/chats/:filterType"
+                exact
+                render={props => {
+                    const activeChatId = App.im.ui.currentActiveChatId;
+                    if (activeChatId) {
+                        return <Redirect to={`${props.match.url}/${activeChatId}`} />;
+                    }
                     return null;
-                }
-            }}/>
-        </div>;
+                }}
+            />
+        </div>);
     }
 }
 

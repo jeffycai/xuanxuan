@@ -4,27 +4,29 @@ export default {
         __: '/chats/:filterType/:id?',
         chat: {
             __: '/chats/:filterType/:id',
-            id: (id, filterType) => {
-                return `/chats/${filterType || ':filterType'}/${id}`
-            }
+            id: (id, filterType) => (`/chats/${filterType || ':filterType'}/${id}`)
         },
         recents: {
             __: '/chats/recents',
-            id: (id) => {
-                return `/chats/recents/${id}`;
-            }
+            id: (id) => (`/chats/recents/${id}`)
         },
         contacts: {
             __: '/chats/contacts',
-            id: (id) => {
-                return `/chats/contacts/${id}`;
-            }
+            id: (id) => (`/chats/contacts/${id}`)
         },
         groups: {
             __: '/chats/groups',
-            id: (id) => {
-                return `/chats/groups/${id}`;
-            }
+            id: (id) => (`/chats/groups/${id}`)
         }
-    }
+    },
+    exts: {
+        _: '/exts',
+        app: {
+            __: '/exts/app/:id',
+            id: (id) => (`/exts/app/${id}`)
+        }
+    },
+    apps: {
+        __: '/:app/:filterType?/:id?/:params?',
+    },
 };

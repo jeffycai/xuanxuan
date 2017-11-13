@@ -18,11 +18,9 @@
   },
   "rules": {
     "arrow-parens": ["off"],
-    "compat/compat": "error",
     "consistent-return": "off",
     "comma-dangle": "off",
     "generator-star-spacing": "off",
-    "import/no-unresolved": "error",
     "import/no-extraneous-dependencies": "off",
     "no-console": "off",
     "no-use-before-define": "off",
@@ -40,14 +38,14 @@
     "object-curly-spacing": ["error", "never"],
     "indent": ["error", 4],
     "no-unused-vars": "warn",
-    "no-param-reassign": "warn",
+    "no-param-reassign": "off",
     "max-len": "off",
     "keyword-spacing": "warn",
-    "default-case": "warn",
+    "default-case": "off",
     "prefer-const": "warn",
     "react/forbid-prop-types": "off",
     "block-spacing": ["error", "never"],
-    "jsx-a11y/no-static-element-interactions": "warn",
+    "jsx-a11y/no-static-element-interactions": "off",
     "no-plusplus": "warn",
     "no-else-return": "warn",
     "no-nested-ternary": "warn",
@@ -58,7 +56,14 @@
     "prefer-template": "warn",
     "no-shadow": "warn",
     "promise/always-return": "warn",
-    "arrow-body-style": "warn"
+    "arrow-body-style": "warn",
+    "import/no-unresolved": "warn",
+    "import/extensions": "off",
+    "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
+    "compat/compat": "warn",
+    "class-methods-use-this": "warn",
+    "no-lonely-if": "warn",
+    "react/jsx-no-target-blank": "warn"
   },
   "plugins": [
     "import",
@@ -70,6 +75,12 @@
     "import/resolver": {
       "webpack": {
         "config": "webpack.config.development.js"
+      },
+      "babel-module": {
+        "alias": {
+          "Platform": "platform/electron",
+          "Config": "config/index.js"
+        }
       }
     }
   }
