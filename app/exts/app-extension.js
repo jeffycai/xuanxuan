@@ -1,3 +1,4 @@
+import Path from 'path';
 import Extension from './base-extension';
 
 export const APP_TYPES = {
@@ -32,14 +33,40 @@ export default class AppExtension extends Extension {
         if (this._appType !== APP_TYPES.webView) {
             return null;
         }
-        return this._pkg.webViewUrl;
+        const webViewUrl = this._pkg.webViewUrl;
+        if (webViewUrl && !this._webViewUrl) {
+            if (!webViewUrl.startsWith('http://') && !webViewUrl.startsWith('https://')) {
+                this._isLocalWebView = true;
+                this._webViewUrl = Path.join(this.localPath, webViewUrl);
+            } else {
+                this._isLocalWebView = false;
+                this._webViewUrl = webViewUrl;
+            }
+        }
+        return this._webViewUrl;
     }
 
-    get appIcon() {return this._pkg.appIcon || this._pkg.icon;}
+    get isLocalWebView() {
+        const webViewUrl = this.webViewUrl; // this line can ensure _isLocalWebView be set value
+        return this._isLocalWebView;
+    }
+
     get appAccentColor() {return this._pkg.appAccentColor || this._pkg.accentColor;}
     get appBackColor() {return this._pkg.appBackColor;}
 
-    get icon() {return this._pkg.icon || this._pkg.appIcon;}
+    get appIcon() {
+        const appIcon = this._pkg.appIcon;
+        if (appIcon && !this._appIcon) {
+            if (appIcon.length > 1 && !appIcon.startsWith('http://') && !appIcon.startsWith('https://') && !appIcon.startsWith('mdi-') && !appIcon.startsWith('icon')) {
+                this._appIcon = Path.join(this.localPath, appIcon);
+            } else {
+                this._appIcon = appIcon;
+            }
+        }
+        return this._appIcon || this.icon;
+    }
+
+    get icon() {return super.icon || this.appIcon;}
     get accentColor() {return this._pkg.accentColor || this._pkg.appAccentColor;}
 
     get MainView() {

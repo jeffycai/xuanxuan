@@ -1,3 +1,5 @@
+import Platform from 'Platform';
+import Path from 'path';
 import {defaultApp, getApp} from './exts';
 import OpenedApp from './opened-app';
 import Lang from '../lang';
@@ -42,6 +44,11 @@ const openApp = (name, pageName = null, params = null) => {
         if (theApp) {
             theOpenedApp = new OpenedApp(theApp, pageName, params);
             openedApps.push(theOpenedApp);
+            if (DEBUG) {
+                console.collapse('Extension Open App', 'greenBg', id, 'greenPale');
+                console.trace('app', theOpenedApp);
+                console.groupEnd();
+            }
         } else {
             if (DEBUG) {
                 console.color('Extension', 'greenBg', name, 'redPale', `Cannot open app '${name}', because cannot find it.`);
@@ -57,7 +64,7 @@ const openApp = (name, pageName = null, params = null) => {
     }
     currentOpenedApp = theOpenedApp;
     if (DEBUG) {
-        console.collapse('Extension', 'greenBg', id, 'greenPale', 'Opened', 'green');
+        console.collapse('Extension Active App', 'greenBg', id, 'greenPale');
         console.trace('app', theOpenedApp);
         console.groupEnd();
     }
@@ -135,7 +142,7 @@ const uninstallExtension = (extension, confirm = true, callback = null) => {
     });
 };
 
-const installExtension = () => {
+const installExtension = (devMode = false) => {
     manager.openInstallDialog((extension, error) => {
         if (extension) {
             App.ui.showMessger(Lang.format('ext.installSuccess.format', extension.displayName), {type: 'success'});
@@ -146,7 +153,7 @@ const installExtension = () => {
             }
             App.ui.showMessger(msg, {type: 'danger'});
         }
-    });
+    }, devMode);
 };
 
 const createSettingContextMenu = extension => {
@@ -171,6 +178,15 @@ const createSettingContextMenu = extension => {
         });
     }
     return items;
+};
+
+const showDevFolder = extension => {
+    const localPath = extension.localPath;
+    if (localPath) {
+        Platform.ui.showItemInFolder(Path.join(localPath, 'package.json'));
+        return true;
+    }
+    return false;
 };
 
 export default {
@@ -204,4 +220,6 @@ export default {
 
     installExtension,
     uninstallExtension,
+
+    showDevFolder,
 };

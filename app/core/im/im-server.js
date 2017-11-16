@@ -19,6 +19,8 @@ const EVENT = {
     history: 'im.chats.history',
     history_start: 'im.chats.history.start',
     history_end: 'im.chats.history.end',
+    message_send: 'im.server.message.send',
+    message_receive: 'im.server.message.receive',
 };
 
 let chatJoinTask = null;
@@ -326,6 +328,10 @@ const sendChatMessage = (messages, chat, isSystemMessage = false) => {
         }
     });
 
+    if (!isSystemMessage) {
+        Events.emit(EVENT.message_send, messages, chat);
+    }
+
     chats.updateChatMessages(messages);
 
     return sendSocketMessageForChat({
@@ -421,13 +427,13 @@ const sendFileMessage = (file, chat) => {
         sendChatMessage(message, chat);
         API.uploadFile(profile.user, file, {gid: chat.gid}, progress => {
             message.updateFileContent({send: progress});
-            sendChatMessage(message, chat);
+            return sendChatMessage(message, chat);
         }).then(data => {
             message.updateFileContent(Object.assign({}, data, {send: true}));
-            sendChatMessage(message, chat);
+            return sendChatMessage(message, chat);
         }).catch(error => {
             message.updateFileContent({send: false, error: error && Lang.error(error)});
-            sendChatMessage(message, chat);
+            return sendChatMessage(message, chat);
         });
     } else {
         Messager.show(Lang.format('error.UPLOAD_FILE_IS_TOO_LARGE', StringHelper.formatBytes(file.size)), {type: 'warning'});
@@ -469,6 +475,19 @@ const exitChat = (chat) => {
     });
 };
 
+const handleReceiveChatMessages = messages => {
+    chats.updateChatMessages(messages);
+    Events.emit(EVENT.message_receive, messages);
+};
+
+const onSendChatMessages = listener => {
+    return Events.on(EVENT.message_send, listener);
+};
+
+const onReceiveChatMessages = listener => {
+    return Events.on(EVENT.message_receive, listener);
+};
+
 export default {
     fetchChatsHistory,
     onChatHistoryStart,
@@ -496,6 +515,9 @@ export default {
     createEmojiChatMessage,
     sendTextMessage,
     sendEmojiMessage,
+    handleReceiveChatMessages,
+    onSendChatMessages,
+    onReceiveChatMessages,
 
     get chatJoinTask() {
         return chatJoinTask;

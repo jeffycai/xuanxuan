@@ -253,6 +253,20 @@ if (Platform.ui.onWindowBlur && Platform.ui.hideWindow) {
     });
 }
 
+const reloadWindow = () => {
+    if (Platform.ui.reloadWindow) {
+        return modal.confirm(Lang.string('dialog.reloadWindowConfirmTip'), {title: Lang.string('dialog.reloadWindowConfirm')}).then(confirmed => {
+            if (confirmed) {
+                Server.logout();
+                setTimeout(() => {
+                    Platform.ui.reloadWindow();
+                }, 1000);
+            }
+            return Promise.resolve(confirm);
+        });
+    }
+};
+
 // Decode url params
 const entryParams = HTML.getSearchParam();
 
@@ -267,5 +281,6 @@ export default {
     showMessger: Messager.show,
     showContextMenu: ContextMenu.show,
     modal,
-    createImageContextMenuItems
+    createImageContextMenuItems,
+    reloadWindow,
 };

@@ -1,8 +1,9 @@
 import React, {Component, PropTypes} from 'react';
 import HTML from '../../utils/html-helper';
 import App from '../../core';
+import replaceViews from '../replace-views';
 
-class MessageContentTextView extends Component {
+class MessageContentText extends Component {
     static propTypes = {
         className: PropTypes.string,
         message: PropTypes.object.isRequired,
@@ -14,6 +15,10 @@ class MessageContentTextView extends Component {
         contentConverter: null,
     };
 
+    static get MessageContentText() {
+        return replaceViews('chats/message-content-text', MessageContentText);
+    }
+
     render() {
         let {
             message,
@@ -22,7 +27,7 @@ class MessageContentTextView extends Component {
             ...other
         } = this.props;
 
-        const content = message.renderedTextContent(App.im.ui.linkMembersInText);
+        const content = message.renderedTextContent(App.im.ui.linkMembersInText, App.im.ui.renderChatMessageContent);
 
         return (<div
             {...other}
@@ -34,4 +39,4 @@ class MessageContentTextView extends Component {
     }
 }
 
-export default MessageContentTextView;
+export default MessageContentText;

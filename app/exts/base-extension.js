@@ -1,5 +1,5 @@
+import Path from 'path';
 import StringHelper from '../utils/string-helper';
-import loadExtensionModule from './extension-module-loader';
 import ExtensionConfig from './extension-config';
 import timeSequence from '../utils/time-sequence';
 import SearchScore from '../utils/search-score';
@@ -48,10 +48,6 @@ export default class Extension {
         this._config = new ExtensionConfig(this.name, this.configurations);
 
         this._data = Object.assign({}, data);
-
-        if (!this.lazy) {
-            this.loadModule();
-        }
     }
 
     addError(name, error) {
@@ -121,7 +117,6 @@ export default class Extension {
     }
 
     get pkg() {return this._pkg;}
-    get icon() {return this._pkg.icon;}
     get accentColor() {return this._pkg.accentColor;}
     get description() {return this._pkg.description;}
     get version() {return this._pkg.version;}
@@ -131,10 +126,34 @@ export default class Extension {
     get homepage() {return this._pkg.homepage;}
     get keywords() {return this._pkg.keywords;}
     get engines() {return this._pkg.engines;}
-    get mainFile() {return this._pkg.main;}
     get repository() {return this._pkg.repository;}
     get bugs() {return this._pkg.bugs;}
     get lazy() {return this._pkg.lazy;}
+
+    get mainFile() {
+        const mainFile = this.pkg.main;
+        if (mainFile && !this._mainFile) {
+            this._mainFile = Path.join(this.localPath, mainFile);
+        }
+        return this._mainFile;
+    }
+
+    get icon() {
+        const icon = this._pkg.icon;
+        if (icon && !this._icon) {
+            if (icon.length > 1 && !icon.startsWith('http://') && !icon.startsWith('https://') && !icon.startsWith('mdi-') && !icon.startsWith('icon')) {
+                this._icon = Path.join(this.localPath, icon);
+            } else {
+                this._icon = icon;
+            }
+        }
+        return this._icon;
+    }
+
+    get authorName() {
+        const author = this.author;
+        return author && (author.name || author);
+    }
 
     get storeData() {
         return {
@@ -143,12 +162,50 @@ export default class Extension {
         };
     }
 
+    get data() {
+        return this._data;
+    }
+
     get installTime() {
         return this._data.installTime;
     }
 
     set installTime(time) {
         this._data.installTime = time;
+        this.updateTime = time;
+    }
+
+    get updateTime() {
+        return this._data.updateTime;
+    }
+
+    set updateTime(time) {
+        this._data.updateTime = time;
+    }
+
+    // get devPath() {
+    //     return this.isDev ? this.localPath : null;
+    // }
+
+    // set devPath(devPath) {
+    //     this.localPath = devPath;
+    //     this.isDev = true;
+    // }
+
+    get localPath() {
+        return this._data.localPath;
+    }
+
+    set localPath(localPath) {
+        this._data.localPath = localPath;
+    }
+
+    get isDev() {
+        return this._data.isDev;
+    }
+
+    set isDev(flag) {
+        this._data.isDev = flag;
     }
 
     get hasModule() {
@@ -158,24 +215,50 @@ export default class Extension {
     /**
      * 重新载入扩展
      */
-    loadModule() {
+    loadModule(api) {
         if (this.mainFile) {
             const start = new Date().getTime();
-            this._module = loadExtensionModule(this.name, this.mainFile);
-            this._loadTime = new Date().getTime() - start;
+            this._module = __non_webpack_require__(this.mainFile);
 
-            if (this._module && this._module.onAttach) {
-                this._module.onAttach(this);
+            this.callModuleMethod('onAttach', this, api);
+
+            this._loadTime = new Date().getTime() - start;
+            this._loaded = true;
+
+            if (DEBUG) {
+                console.collapse('Extension Attach', 'greenBg', this.name, 'greenPale', `spend time: ${this._loadTime}ms`, 'orange');
+                console.log('extension', this);
+                console.log('module', this._module);
+                console.groupEnd();
             }
         }
         return this._module;
     }
 
+    get isModuleLoaded() {
+        return this._loaded;
+    }
+
+    get needRestart() {
+        return this.mainFile && !this._loaded;
+    }
+
     detach() {
-        if (this._module && this._module.onDetach) {
-            this._module.onDetach(this);
-        }
+        this.callModuleMethod('onDetach', this);
         this._module = null;
+        if (DEBUG) {
+            console.collapse('Extension Detach', 'greenBg', this.name, 'greenPale');
+            console.log('extension', this);
+            console.groupEnd();
+        }
+    }
+
+    get hasReplaceViews() {
+        return this._module && this._module.replaceViews;
+    }
+
+    get replaceViews() {
+        return this.module.replaceViews;
     }
 
     /**
@@ -187,6 +270,13 @@ export default class Extension {
 
     get module() {
         return this._module || this.loadModule();
+    }
+
+    callModuleMethod(methodName, ...params) {
+        const extModule = this.module;
+        if (extModule && extModule[methodName]) {
+            return extModule[methodName](...params);
+        }
     }
 
     getMatchScore(keys) {

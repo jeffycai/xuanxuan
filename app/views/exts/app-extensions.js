@@ -2,12 +2,14 @@ import React, {Component, PropTypes} from 'react';
 import HTML from '../../utils/html-helper';
 import Lang from '../../lang';
 import SearchControl from '../../components/search-control';
+import Icon from '../../components/icon';
 import Button from '../../components/button';
 import OpenedApp from '../../exts/opened-app';
 import Exts from '../../exts';
-import ExtensionListItem from './extension-list-item';
 import App from '../../core';
 import ExtensionDetailDialog from './extension-detail-dialog';
+import {ExtensionListItem} from './extension-list-item';
+import replaceViews from '../replace-views';
 
 const extensionTypes = [
     {type: '', label: Lang.string('ext.extensions.all')},
@@ -16,7 +18,11 @@ const extensionTypes = [
     {type: 'theme', label: Lang.string('ext.extensions.themes')},
 ];
 
-export default class ExtensionsView extends Component {
+export default class AppExtensions extends Component {
+    static get AppExtensions() {
+        return replaceViews('exts/app-extensions', AppExtensions);
+    }
+
     static propTypes = {
         className: PropTypes.string,
         app: PropTypes.instanceOf(OpenedApp).isRequired,
@@ -64,11 +70,30 @@ export default class ExtensionsView extends Component {
 
     handleExtensionItemClick(ext, e) {
         ExtensionDetailDialog.show(ext);
+        if (DEBUG) {
+            console.collapse('Extension View', 'greenBg', ext.displayName, 'greenPale');
+            console.log('extension', ext);
+            console.groupEnd();
+        }
     }
 
     handleInstallBtnClick = () => {
         Exts.ui.installExtension();
-    }
+    };
+
+    handleMenuBtnClick = e => {
+        const menu = [{
+            label: Lang.string('ext.extensions.installDevExtension'),
+            click: () => {
+                Exts.ui.installExtension(true);
+            }
+        }];
+        App.ui.showContextMenu({x: e.clientX, y: e.clientY, target: e.target}, menu);
+    };
+
+    handleRestartBtnClick = () => {
+        App.ui.reloadWindow();
+    };
 
     render() {
         const {
@@ -78,9 +103,10 @@ export default class ExtensionsView extends Component {
 
         const {search, type} = this.state;
         const extensions = search ? Exts.all.search(search, type) : Exts.all.getTypeList(type);
+        const needRestartExts = extensions && extensions.filter(x => x.needRestart);
 
-        return (<div className={HTML.classes('app-ext-extensions', className)}>
-            <header className="app-ext-extensions-header has-padding heading divider">
+        return (<div className={HTML.classes('app-ext-extensions dock column single', className)}>
+            <header className="app-ext-extensions-header app-ext-common-header has-padding heading divider flex-none">
                 <nav className="nav">
                     {
                         extensionTypes.map(extType => {
@@ -88,16 +114,26 @@ export default class ExtensionsView extends Component {
                         })
                     }
                 </nav>
-                <div className="flex-auto">
+                <div className="search-box">
                     <SearchControl onSearchChange={this.handleSearchChange} />
                 </div>
-                <nav className="toolbar flex-none">
+                <nav className="toolbar">
                     <div className="nav-item has-padding-sm hint--left" data-hint={Lang.string('ext.extensions.installLocalExtTip')}>
                         <Button onClick={this.handleInstallBtnClick} className="rounded outline green hover-solid" icon="package-variant" label={Lang.string('ext.extensions.installLocalExtension')} />
                     </div>
+                    <div className="nav-item has-padding-sm hint--left" data-hint={Lang.string('ext.extensions.moreActions')}>
+                        <Button onClick={this.handleMenuBtnClick} className="rounded outline primary hover-solid" icon="menu" />
+                    </div>
                 </nav>
             </header>
-            <div className="app-exts-list list has-padding multi-lines with-avatar">
+            {
+                needRestartExts && needRestartExts.length ? <div className="warning-pale text-warning flex-none center-content"><div className="heading">
+                    <Icon name="information" />
+                    <div className="title">{Lang.format('ext.extensions.needRestartTip.format', needRestartExts.length)}</div>
+                    <Button onClick={this.handleRestartBtnClick} className="outline warning hover-solid rounded" label={Lang.string('ext.extensions.restart')} icon="restart" />
+                </div></div> : null
+            }
+            <div className="app-exts-list list has-padding multi-lines with-avatar flex-auto scroll-y content-start">
                 <div className="heading">
                     <div className="title">{Lang.string(search ? 'ext.extensions.searchResult' : 'ext.extensions.installed')}{type ? ` - ${Lang.string('ext.type.' + type)}` : ''} ({extensions.length})</div>
                 </div>

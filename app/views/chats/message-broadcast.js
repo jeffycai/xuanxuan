@@ -2,6 +2,8 @@ import React, {Component, PropTypes} from 'react';
 import HTML from '../../utils/html-helper';
 import Avatar from '../../components/avatar';
 import App from '../../core';
+import StringHelper from '../../utils/string-helper';
+import replaceViews from '../replace-views';
 
 class MessageBroadcast extends Component {
     static propTypes = {
@@ -19,6 +21,10 @@ class MessageBroadcast extends Component {
         contentConverter: null,
     };
 
+    static get MessageBroadcast() {
+        return replaceViews('chats/message-broadcast', MessageBroadcast);
+    }
+
     render() {
         const {
             message,
@@ -29,8 +35,9 @@ class MessageBroadcast extends Component {
             ...other
         } = this.props;
 
-        let content = message.renderedTextContent(App.im.ui.linkMembersInText);
-        if (prefix !== undefined) {
+        let content = message.renderedTextContent(App.im.ui.linkMembersInText, App.im.ui.renderChatMessageContent);
+
+        if (StringHelper.isNotEmpty(prefix)) {
             content = prefix + content;
         }
 
