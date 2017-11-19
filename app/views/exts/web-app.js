@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import Platform from 'Platform';
 import HTML from '../../utils/html-helper';
-import {AppExtension} from '../../exts/extension';
+import OpenedApp from '../../exts/opened-app';
 import timeSequence from '../../utils/time-sequence';
 import replaceViews from '../replace-views';
 
@@ -11,7 +11,7 @@ export default class WebApp extends Component {
     }
 
     static propTypes = {
-        app: PropTypes.instanceOf(AppExtension).isRequired,
+        app: PropTypes.instanceOf(OpenedApp).isRequired,
         className: PropTypes.string,
         onLoadingChange: PropTypes.func,
         onPageTitleChange: PropTypes.func,
@@ -69,7 +69,8 @@ export default class WebApp extends Component {
     };
 
     handleLoadingStart = () => {
-        const {onLoadingChange} = this.props;
+        const {onLoadingChange, app} = this.props;
+        app.webview = document.getElementById(this.webviewId);
         if (onLoadingChange) {
             onLoadingChange(true);
         }
@@ -104,7 +105,7 @@ export default class WebApp extends Component {
             onPageTitleChange,
         } = this.props;
 
-        const webviewHtml = `<webview id="${this.webviewId}" src="${app.webViewUrl}" class="dock" ${app.isLocalWebView ? 'nodeintegration' : ''} />`;
+        const webviewHtml = `<webview id="${this.webviewId}" src="${app.app.webViewUrl}" class="dock" ${app.app.isLocalWebView ? 'nodeintegration' : ''} />`;
 
         return (<div className={HTML.classes('app-web-app', className)}>
             <div className="dock" dangerouslySetInnerHTML={{__html: webviewHtml}} />

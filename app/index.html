@@ -20,10 +20,12 @@
             const link = document.createElement('link');
             link.rel = 'stylesheet';
             link.href = './dist/style.css';
+            link.id = 'theme';
             document.getElementsByTagName('head')[0].appendChild(link);
         }
     }());
     </script>
+    <style>.theme-changing * {transition: all .5s}</style>
   </head>
   <body>
     <div class="page" id="appContainer"></div>
