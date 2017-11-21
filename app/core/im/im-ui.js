@@ -11,7 +11,7 @@ import Modal from '../../components/modal';
 import ContextMenu from '../../components/context-menu';
 import ChatCommittersSettingDialog from '../../views/chats/chat-committers-setting-dialog';
 import ChatsHistoryDialog from '../../views/chats/chats-history-dialog';
-import ChatInvitePopover from '../../views/chats/chat-invite-popover';
+import ChatInviteDialog from '../../views/chats/chat-invite-dialog';
 import ChatTipPopover from '../../views/chats/chat-tip-popover';
 import EmojiPopover from '../../views/common/emoji-popover';
 import HotkeySettingDialog from '../../views/common/hotkey-setting-dialog';
@@ -94,7 +94,7 @@ const createChatToolbarItems = (chat, showSidebarIcon = 'auto') => {
             icon: 'account-multiple-plus',
             label: Lang.string('chat.toolbor.invite'),
             click: e => {
-                ChatInvitePopover.show({x: e.pageX, y: e.pageY, target: e.target, placement: 'bottom'}, chat);
+                ChatInviteDialog.show(chat);
             }
         });
     }
@@ -361,23 +361,21 @@ const createChatToolbarMoreContextMenuItems = chat => {
     return menu;
 };
 
-const createChatMemberContextMenuItems = member => {
-    let menu = [];
-    if (member.account !== profile.userAccount) {
-        const gid = chats.getOne2OneChatGid([member, profile.user]);
-        if (gid !== activedChatId) {
-            menu.push({
-                label: Lang.string(`chat.atHim.${member.gender}`, Lang.string('chat.atHim')),
-                click: () => {
-                    sendContentToChat(`@${member.displayName} `);
-                }
-            }, {
-                label: Lang.string('chat.sendMessage'),
-                click: () => {
-                    window.location.hash = `#/chats/contacts/${gid}`;
-                }
-            });
-        }
+const createChatMemberContextMenuItems = (member, chat) => {
+    const menu = [];
+    if (member.account !== profile.userAccount && chat.isGroupOrSystem) {
+        const one2OneGid = chats.getOne2OneChatGid([member, profile.user]);
+        menu.push({
+            label: Lang.string(`chat.atHim.${member.gender}`, Lang.string('chat.atHim')),
+            click: () => {
+                sendContentToChat(`@${member.displayName} `);
+            }
+        }, {
+            label: Lang.string('chat.sendMessage'),
+            click: () => {
+                window.location.hash = `#/chats/contacts/${one2OneGid}`;
+            }
+        });
     }
     menu.push({
         label: Lang.string('member.profile.view'),
@@ -385,6 +383,19 @@ const createChatMemberContextMenuItems = member => {
             MemberProfileDialog.show(member);
         }
     });
+    if (chat.canKickOff(profile.user, member.id)) {
+        menu.push({type: 'separator'}, {
+            label: Lang.string('chat.kickOffFromGroup'),
+            click: () => {
+                return Modal.confirm(Lang.format('chat.kickOffFromGroup.confirm', member.displayName)).then(result => {
+                    if (result) {
+                        return Server.kickOfMemberFromChat(chat, member);
+                    }
+                    return Promise.reject();
+                });
+            }
+        });
+    }
     return menu;
 };
 
