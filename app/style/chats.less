@@ -1,9 +1,3 @@
-@app-chat-menu-width: (200*@rem);
-
-.app-chats-menu {
-  width: @app-chat-menu-width;
-}
-
 .app-chats-menu-header {
   z-index: 1040;
   padding: @space-sm;
@@ -45,7 +39,7 @@
 .app-chats-menu-list {
   top: (50*@rem);
 
-  > .item {
+  .item {
     height: (40*@rem);
     padding-top: 0;
     padding-bottom: 0;
@@ -62,10 +56,6 @@
       }
     }
   }
-}
-
-.app-chats-cache {
-  left: @app-chat-menu-width;
 }
 
 .app-chat-header {
@@ -614,5 +604,90 @@
       width: (160*@rem);
       align-items: center;
     }
+  }
+}
+
+.app-contact-list {
+  > .app-member-me {
+    background-color: rgba(0,0,0,.05);
+    box-shadow: 0 @rem 0 rgba(0,0,0,.1);
+    overflow: hidden;
+
+    > .btn-wrapper {
+      z-index: 1;
+      position: absolute;
+      right: (5*@rem);
+      top: (5*@rem);
+    }
+
+    > .title {
+      display: flex;
+      flex-wrap: nowrap;
+      .flex-middle;
+    }
+  }
+
+  .app-group-list {
+    margin-left: 0;
+    position: relative;
+
+    .heading {
+      transition: @animation-type @animation-speed-fast;
+      transition-property: opacity, background-color;
+      cursor: pointer;
+
+      > .icon {
+        margin-left: (4*@rem);
+        opacity: .7;
+        color: @color-primary;
+        transition: opacity @animation-type @animation-speed-fast;
+      }
+
+      > .title {
+        padding-left: (4*@rem);
+        opacity: .7;
+        font-weight: normal;
+        color: @color-primary;
+      }
+
+      &:hover {
+        .darken;
+        > .title,
+        > .icon {
+          opacity: 1;
+        }
+      }
+    }
+
+    &:before {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      background-color: rgba(0,0,255,.15);
+      transition: transform @animation-speed-normal @animation-type;
+      content: ' ';
+      width: (4*@rem);
+      z-index: 10;
+      transform: translate(-50%, -50%) scale(0, 0);
+    }
+
+    &:hover:before {
+      transform: translate(0, 0) scale(1, 1);
+    }
+  }
+
+  > .app-group-list > .app-group-list {
+    > .heading {padding-left: (16*@rem);}
+    > .item {padding-left: (24*@rem);}
+  }
+  > .app-group-list > .app-group-list > .app-group-list {
+    > .heading {padding-left: (36*@rem);}
+    > .item {padding-left: (44*@rem);}
+  }
+  > .app-group-list > .app-group-list > .app-group-list .app-group-list {
+    > .heading {padding-left: (56*@rem);}
+    > .item {padding-left: (64*@rem);}
   }
 }

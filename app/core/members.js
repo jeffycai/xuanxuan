@@ -1,8 +1,11 @@
 import Member from './models/member';
 import profile from './profile';
 import Events from './events';
+import Lang from '../lang';
 
 let members = null;
+let roles = null;
+let depts = null;
 
 const update = (memberArr) => {
     if (!Array.isArray(memberArr)) {
@@ -21,11 +24,53 @@ const update = (memberArr) => {
     Events.emitDataChange({members: newMembers});
 };
 
-const init = (memberArr) => {
+const deptsSorter = (d1, d2) => {
+    let result = (d1.order || 0) - (d2.order || 0);
+    if (result === 0 || Number.isNaN(result)) {
+        result = d1.id - d2.id;
+    }
+    return result;
+};
+const initDepts = (deptsMap) => {
+    depts = {};
+    if (deptsMap) {
+        const deptsArr = Object.keys(deptsMap).map(deptId => {
+            const dept = deptsMap[deptId];
+            dept.id = deptId;
+            return deptId;
+        }).sort(deptsSorter);
+        deptsArr.forEach(deptId => {
+            const dept = deptsMap[deptId];
+            let parentDept = dept.parent && deptsMap[dept.parent];
+            if (parentDept) {
+                const parents = [];
+                if (!parentDept.children) {
+                    parentDept.children = [];
+                }
+                parentDept.children.push(dept);
+                while (parentDept) {
+                    parents.push(parentDept);
+                    parentDept = parentDept.parent && deptsMap[parentDept.parent];
+                }
+                dept.parents = parents;
+            }
+            depts[deptId] = dept;
+        });
+    }
+};
+
+const getDeptsTree = () => {
+    return Object.keys(depts).map(x => depts[x]).filter(x => !x.parents).sort(deptsSorter);
+};
+
+const init = (memberArr, rolesMap, deptsMap) => {
     members = {};
     if (memberArr && memberArr.length) {
         update(memberArr);
     }
+    roles = rolesMap || {};
+
+    initDepts(deptsMap);
 };
 
 /**
@@ -123,6 +168,14 @@ const remove = member => {
     return false;
 };
 
+const getRoleName = role => {
+    return role ? (roles[role] || Lang.string(`member.role.${role}`, role)) : '';
+};
+
+const getDept = deptId => {
+    return depts[deptId];
+};
+
 profile.onSwapUser(user => {
     init();
 });
@@ -136,10 +189,17 @@ export default {
     guess,
     query,
     remove,
+    getRoleName,
+    getDept,
+    getDeptsTree,
+    deptsSorter,
     get map() {
         return members;
     },
     get all() {
         return getAll();
+    },
+    get depts() {
+        return depts;
     }
 };

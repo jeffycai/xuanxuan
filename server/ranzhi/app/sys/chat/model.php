@@ -162,12 +162,13 @@ class chatModel extends model
      * @access public
      * @return array
      */
-    public function getMessageList($idList = array(), $pager = null)
+    public function getMessageList($idList = array(), $pager = null, $startDate = '')
     {
         $messages = $this->dao->select('*')
             ->from(TABLE_IM_MESSAGE)
             ->where('1')
             ->beginIF($idList)->andWhere('id')->in($idList)->fi()
+            ->beginIF($startDate)->andWhere('date')->ge($startDate)->fi()
             ->orderBy('id_desc')
             ->page($pager)
             ->fetchAll();
@@ -190,10 +191,11 @@ class chatModel extends model
      * @access public
      * @return array
      */
-    public function getMessageListByCGID($cgid = '', $pager = null)
+    public function getMessageListByCGID($cgid = '', $pager = null, $startDate = '')
     {
         $messages = $this->dao->select('*')->from(TABLE_IM_MESSAGE)
             ->where('cgid')->eq($cgid)
+            ->beginIF($startDate)->andWhere('date')->ge($startDate)->fi()
             ->orderBy('id_desc')
             ->page($pager)
             ->fetchAll();
@@ -248,7 +250,7 @@ class chatModel extends model
             ->where('type')->eq('system')
             ->fetchAll();
 
-        $chats = $this->dao->select('t1.*, t2.star, t2.hide, t2.mute')
+        $chats = $this->dao->select('t1.*, t2.star, t2.hide, t2.mute, t2.group')
             ->from(TABLE_IM_CHAT)->alias('t1')
             ->leftjoin(TABLE_IM_CHATUSER)->alias('t2')->on('t1.gid=t2.cgid')
             ->where('t2.quit')->eq('0000-00-00 00:00:00')
@@ -443,6 +445,26 @@ class chatModel extends model
     {
         $this->dao->update(TABLE_IM_CHATUSER)
             ->set('hide')->eq($hide)
+            ->where('cgid')->eq($gid)
+            ->andWhere('user')->eq($userID)
+            ->exec();
+
+        return !dao::isError();
+    }
+
+    /**
+     * Set group for a chat
+     *
+     * @param  string $gid
+     * @param  string $group
+     * @param  int    $userID
+     * @access public
+     * @return void
+     */
+    public function groupChat($gid = '', $group = '', $userID = 0)
+    {
+        $this->dao->update(TABLE_IM_CHATUSER)
+            ->set('group')->eq($group)
             ->where('cgid')->eq($gid)
             ->andWhere('user')->eq($userID)
             ->exec();
