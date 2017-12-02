@@ -21,6 +21,7 @@ import Emojione from '../../components/emojione';
 import CoreServer from '../server';
 import ChatChangeFontPopover from '../../views/chats/chat-change-font-popover';
 import db from '../db';
+import ChatAddCategoryDialog from '../../views/chats/chat-add-category-dialog';
 
 let activedChatId = null;
 let activeCaches = {};
@@ -39,11 +40,22 @@ const activeChat = chat => {
             activedChatId = chat.gid;
             Events.emit(EVENT.activeChat, chat);
         }
+        const urlHash = window.location.hash;
+        if (!urlHash.endsWith(`/${chat.gid}`)) {
+            window.location.hash = `#/chats/recents/${chat.gid}`;
+        }
         activeCaches[chat.gid] = true;
         if (chat.noticeCount) {
             chat.muteNotice();
             chats.saveChatMessages(chat.messages);
         }
+    }
+};
+
+const activeLastChat = () => {
+    const lastChat = chats.getLastRecentChat();
+    if (lastChat) {
+        activeChat(lastChat);
     }
 };
 
@@ -121,14 +133,17 @@ const createChatToolbarItems = (chat, showSidebarIcon = 'auto') => {
         });
     }
     if (chat.isGroupOrSystem) {
-        items.push({
-            id: 'more',
-            icon: 'dots-horizontal',
-            label: Lang.string('chat.toolbor.more'),
-            click: e => {
-                ContextMenu.show({x: e.pageX, y: e.pageY}, createChatToolbarMoreContextMenuItems(chat));
-            }
-        });
+        const moreItems = createChatToolbarMoreContextMenuItems(chat);
+        if (moreItems && moreItems.length) {
+            items.push({
+                id: 'more',
+                icon: 'dots-horizontal',
+                label: Lang.string('chat.toolbor.more'),
+                click: e => {
+                    ContextMenu.show({x: e.pageX, y: e.pageY}, moreItems);
+                }
+            });
+        }
     }
     items[items.length - 1].hintPosition = 'bottom-left';
     return items;
@@ -239,7 +254,7 @@ const createSendboxToolbarItems = (chat, config) => {
             ChatChangeFontPopover.show({x: e.pageX, y: e.pageY, target: e.target, placement: 'top'});
         }
     });
-    let user = profile.user;
+    const {user} = profile;
     if (user && user.config.showMessageTip) {
         items.push({
             id: 'tips',
@@ -271,8 +286,21 @@ const chatExitConfirm = chat => {
     });
 };
 
-const createChatContextMenuItems = (chat) => {
-    let menu = [];
+const chatDismissConfirm = chat => {
+    return Modal.confirm(Lang.format('chat.group.dismissConfirm', chat.getDisplayName({members, user: profile.user}))).then(result => {
+        if (result) {
+            return Server.dimissChat(chat).then(theChat => {
+                if (theChat) {
+                    activeLastChat();
+                }
+                return Promise.resolve(theChat);
+            });
+        }
+    });
+};
+
+const createChatContextMenuItems = (chat, menuType = null, viewType = null) => {
+    const menu = [];
     if (chat.isOne2One) {
         menu.push({
             label: Lang.string('member.profile.view'),
@@ -307,7 +335,19 @@ const createChatContextMenuItems = (chat) => {
         });
     }
 
-    if (chat.canExit) {
+    if (chat.canDismiss(profile.user)) {
+        if (menu.length) {
+            menu.push({type: 'separator'});
+        }
+        menu.push({
+            label: Lang.string('chat.group.dismiss'),
+            click: () => {
+                chatDismissConfirm(chat);
+            }
+        });
+    }
+
+    if (chat.canExit(profile.user)) {
         menu.push({type: 'separator'}, {
             label: Lang.string('chat.group.exit'),
             click: () => {
@@ -315,6 +355,21 @@ const createChatContextMenuItems = (chat) => {
             }
         });
     }
+
+    if (menuType === 'contacts' || menuType === 'groups') {
+        if (viewType === 'category') {
+            if (menu.length) {
+                menu.push({type: 'separator'});
+            }
+            menu.push({
+                label: Lang.string('chats.menu.group.add'),
+                click: () => {
+                    ChatAddCategoryDialog.show(chat);
+                }
+            });
+        }
+    }
+
     return menu;
 };
 
@@ -348,7 +403,19 @@ const createChatToolbarMoreContextMenuItems = chat => {
         });
     }
 
-    if (chat.canExit) {
+    if (chat.canDismiss(profile.user)) {
+        if (menu.length) {
+            menu.push({type: 'separator'});
+        }
+        menu.push({
+            label: Lang.string('chat.group.dismiss'),
+            click: () => {
+                chatDismissConfirm(chat);
+            }
+        });
+    }
+
+    if (chat.canExit(profile.user)) {
         if (menu.length) {
             menu.push({type: 'separator'});
         }
@@ -384,7 +451,7 @@ const createChatMemberContextMenuItems = (member, chat) => {
             MemberProfileDialog.show(member);
         }
     });
-    if (chat.canKickOff(profile.user, member.id)) {
+    if (chat.canKickOff(profile.user, member)) {
         menu.push({type: 'separator'}, {
             label: Lang.string('chat.kickOffFromGroup'),
             click: () => {
@@ -436,10 +503,62 @@ const createGroupChat = (members) => {
     }).then(newName => {
         if (newName) {
             return Server.createChatWithMembers(members, {name: newName});
-        } else {
-            return Promise.reject(false);
         }
+        return Promise.reject(false);
     });
+};
+
+const renameChatCategory = (group, type = 'contact', newCategoryName = null) => {
+    if (newCategoryName === null) {
+        return Modal.prompt(Lang.string('chats.menu.group.renameTip'), group.title).then(name => {
+            return renameChatCategory(group, type, name);
+        });
+    }
+    if (newCategoryName !== group.title) {
+        if (group.id) {
+            const isContactType = type === 'contact';
+            const renameChats = chats.query(x => ((isContactType ? x.isOne2One : x.isGroupOrSystem) && x.category === group.id), false);
+            return Server.setChatCategory(renameChats, newCategoryName).then(() => {
+                const categoriesConfigName = isContactType ? 'contactsCategories' : 'groupsCategories';
+                const categories = profile.user.config[categoriesConfigName];
+                if (!categories[newCategoryName]) {
+                    categories[newCategoryName] = categories[group.id];
+                }
+                delete categories[group.id];
+                profile.user.config[categoriesConfigName] = categories;
+            });
+        } else {
+            profile.user.config[type === 'contact' ? 'contactsDefaultCategoryName' : 'groupsDefaultCategoryName'] = newCategoryName;
+        }
+    }
+};
+
+const createGroupHeadingContextMenu = (group, type = 'contact') => {
+    const menus = [];
+    if (!group.system) {
+        menus.push({
+            label: Lang.string('chats.menu.group.rename'),
+            click: () => {
+                renameChatCategory(group, type);
+            }
+        });
+    }
+    if (group.id && !group.system) {
+        menus.push({
+            label: Lang.string('chats.menu.group.delete'),
+            click: () => {
+                const defaultCategoryName = profile.user.config[type === 'contact' ? 'contactsDefaultCategoryName' : 'groupsDefaultCategoryName'] || Lang.string('chats.menu.group.default');
+                return Modal.confirm(Lang.format('chats.menu.group.delete.tip.format', defaultCategoryName), {
+                    title: Lang.format('chats.menu.group.delete.confirm.format', group.title)
+                }).then(result => {
+                    if (result) {
+                        renameChatCategory(group, type, '');
+                    }
+                });
+            }
+        });
+    }
+    return menus;
 };
 
 profile.onSwapUser(user => {
@@ -485,7 +604,7 @@ if (Platform.screenshot && Platform.shortcut) {
         }
     };
     profile.onUserConfigChange(change => {
-        if (change['shortcut.captureScreen']) {
+        if (change && change['shortcut.captureScreen']) {
             registerShortcut();
         }
     });
@@ -498,6 +617,7 @@ if (Platform.screenshot && Platform.shortcut) {
 
 export default {
     activeChat,
+    activeLastChat,
     onActiveChat,
     mapCacheChats,
     isActiveChat,
@@ -515,6 +635,7 @@ export default {
     onSendContentToChat,
     createChatMemberContextMenuItems,
     onRenderChatMessageContent,
+    createGroupHeadingContextMenu,
 
     get currentActiveChatId() {
         return activedChatId;

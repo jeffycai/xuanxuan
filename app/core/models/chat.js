@@ -2,7 +2,7 @@ import Entity from './entity';
 import Status from '../../utils/status';
 import Lang from '../../lang';
 import Pinyin from '../../utils/pinyin';
-import { ChatMessage } from './index';
+import {ChatMessage} from './index';
 
 const STATUS = new Status({
     local: 0,
@@ -24,6 +24,7 @@ const COMMITTERS_TYPES = {
 };
 
 const MAX_MESSAGE_COUNT = 100;
+const DISMISS_VISIBLE_TIME = 1000*60*60*24*90;
 
 class Chat extends Entity {
     static NAME = 'Chat';
@@ -38,13 +39,14 @@ class Chat extends Entity {
         createdBy: {type: 'string', indexed: true},
         editedDate: {type: 'timestamp'},
         lastActiveTime: {type: 'timestamp', indexed: true},
+        dismissDate: {type: 'timestamp', indexed: true},
         star: {type: 'boolean', indexed: true},
         mute: {type: 'boolean', indexed: true},
         public: {type: 'boolean', indexed: true},
         admins: {type: 'set'},
         members: {type: 'set'},
         committers: {type: 'string'},
-        group: {type: 'string'},
+        category: {type: 'string'},
     });
 
     constructor(data, entityType = Chat.NAME) {
@@ -126,16 +128,26 @@ class Chat extends Entity {
         return this.type === TYPES.one2one;
     }
 
+    get isDeleteOne2One() {
+        return this.isOne2One && this._isDeleteOne2One;
+    }
+
+    set isDeleteOne2One(flag) {
+        if (this.isOne2One) {
+            this._isDeleteOne2One = flag;
+        }
+    }
+
     get isGroup() {
         return this.type === TYPES.group;
     }
 
-    get group() {
-        return this.$get('group');
+    get category() {
+        return this.$get('category');
     }
 
-    set group(name) {
-        return this.$set('group', name);
+    set category(name) {
+        return this.$set('category', name);
     }
 
     get name() {
@@ -203,6 +215,22 @@ class Chat extends Entity {
 
     set createdDate(createdDate) {
         this.$set('createdDate', createdDate);
+    }
+
+    get dismissDate() {
+        return this.$get('dismissDate');
+    }
+
+    set dismissDate(dismissDate) {
+        this.$set('dismissDate', dismissDate);
+    }
+
+    get isDismissed() {
+        return !!this.dismissDate;
+    }
+
+    canDismiss(user) {
+        return !this.isDismissed && this.isGroup && this.isAdmin(user);
     }
 
     get admins() {
@@ -277,11 +305,11 @@ class Chat extends Entity {
     }
 
     canRename(user) {
-        return this.isCommitter(user) && !this.isOne2One;
+        return !this.isDismissed && this.isCommitter(user) && !this.isOne2One;
     }
 
     canInvite(user) {
-        return (this.isAdmin(user) || this.isCommitter(user)) && (!this.isSystem);
+        return !this.isDismissed && (this.isAdmin(user) || this.isCommitter(user)) && (!this.isSystem);
     }
 
     canKickOff(user, kickOfWho) {
@@ -289,15 +317,33 @@ class Chat extends Entity {
     }
 
     canMakePublic(user) {
-        return this.isAdmin(user) && this.isGroup;
+        return !this.isDismissed && this.isAdmin(user) && this.isGroup;
     }
 
     canSetCommitters(user) {
-        return this.isAdmin(user) && !this.isOne2One;
+        return !this.isDismissed && this.isAdmin(user) && !this.isOne2One;
     }
 
     isReadonly(member) {
-        return !this.isCommitter(member);
+        return this.isDeleteOne2One || this.isDismissed || !this.isCommitter(member);
+    }
+
+    get visible() {
+        if (this._visible === undefined) {
+            const dismissDate = this.dismissDate;
+            if (dismissDate) {
+                const now = new Date().getTime();
+                this._visible = now <= (dismissDate + DISMISS_VISIBLE_TIME);
+            } else {
+                this._visible = true;
+            }
+        }
+        return this._visible;
+    }
+
+    get visibleDate() {
+        const dismissDate = this.dismissDate;
+        return dismissDate ? (dismissDate + DISMISS_VISIBLE_TIME) : 0;
     }
 
     get hasWhitelist() {
@@ -441,7 +487,13 @@ class Chat extends Entity {
         const appMembers = app.members;
         const currentUser = app.user;
         if (this.isOne2One && !this._theOtherOne) {
-            this._theOtherOne = this.getMembersSet(appMembers).find(member => member.id !== currentUser.id);
+            let member = this.getMembersSet(appMembers).find(member => member.id !== currentUser.id);
+            if (member.temp) {
+                member = appMembers.get(member.id);
+                this._membersSet = null;
+                return member;
+            }
+            this._theOtherOne = member;
         }
         return this._theOtherOne;
     }
@@ -459,11 +511,11 @@ class Chat extends Entity {
     }
 
     get canJoin() {
-        return this.public && this.isGroup;
+        return !this.isDismissed && this.public && this.isGroup;
     }
 
-    get canExit() {
-        return this.isGroup;
+    canExit(user) {
+        return this.isGroup && !this.isOwner(user);
     }
 
     get isSystem() {

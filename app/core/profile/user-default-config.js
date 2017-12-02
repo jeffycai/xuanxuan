@@ -21,8 +21,11 @@ export default {
     'ui.chat.enableSearchInEmojionePicker': false,
     'ui.chat.contacts.groupBy': 'normal', // 'normal', 'role', 'dept'
     'ui.chat.contacts.order.role': {},
-    'ui.chat.contacts.order.normal': {},
+    'ui.chat.contacts.categories': {},
     'ui.chat.contacts.order.dept': {},
+    'ui.chat.contacts.category.default': '',
+    'ui.chat.groups.category.default': '',
+    'ui.chat.groups.categories': {},
     'ui.notify.enableSound': true,
     'ui.notify.playSoundCondition': 'onWindowHide', // or "onWindowBlur", "
     'ui.notify.muteOnUserIsBusy': true,

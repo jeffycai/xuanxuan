@@ -54,6 +54,8 @@ class chat extends control
                 $users = $this->chat->getUserList($status = 'online');
                 $user->signed = $this->chat->getSignedTime($account);
 
+                $user->ranzhiUrl = commonModel::getSysURL();
+
                 $this->output->users = array_keys($users);
                 $this->output->data  = $user;
             }
@@ -103,9 +105,9 @@ class chat extends control
      * @access public
      * @return void
      */
-    public function userGetList($userID = 0)
+    public function userGetList($idList = '', $userID = 0)
     {
-        $users = $this->chat->getUserList($status = '', $idList = '', $idAsKey = false);
+        $users = $this->chat->getUserList($status = '', $idList, $idAsKey = false);
 
         if(dao::isError())
         {
@@ -114,21 +116,29 @@ class chat extends control
         }
         else
         {
-            $this->app->loadLang('user', 'sys');
-            $roles = $this->lang->user->roleList;
-
-            $allDepts = $this->loadModel('tree')->getListByType('dept');
-            $depts = array();
-            foreach ($allDepts as $id => $dept)
-            {
-                $depts[$id] = array('name' => $dept->name, 'order' => (int)$dept->order, 'parent' => (int)$dept->parent);
-            }
 
             $this->output->result = 'success';
             $this->output->users  = !empty($userID) ? array($userID) : array();
             $this->output->data   = $users;
-            $this->output->roles  = $roles;
-            $this->output->depts  = $depts;
+
+            if (empty($idList))
+            {
+                $this->app->loadLang('user', 'sys');
+                $roles = $this->lang->user->roleList;
+
+                $allDepts = $this->loadModel('tree')->getListByType('dept');
+                $depts = array();
+                foreach ($allDepts as $id => $dept)
+                {
+                    $depts[$id] = array('name' => $dept->name, 'order' => (int)$dept->order, 'parent' => (int)$dept->parent);
+                }
+                $this->output->roles  = $roles;
+                $this->output->depts  = $depts;
+            }
+            else
+            {
+                $this->output->partial  = $idList;
+            }
         }
 
         die($this->app->encrypt($this->output));
@@ -506,6 +516,52 @@ class chat extends control
     }
 
     /**
+     * Dismiss a chat
+     *
+     * @param  string $gid
+     * @param  int    $userID
+     * @access public
+     * @return void
+     */
+    public function dismiss($gid = '', $userID = 0)
+    {
+        $chat = $this->chat->getByGID($gid);
+        if(!$chat)
+        {
+            $this->output->result  = 'fail';
+            $this->output->message = $this->lang->chat->notExist;
+
+            die($this->app->encrypt($this->output));
+        }
+        if($chat->type != 'group')
+        {
+            $this->output->result  = 'fail';
+            $this->output->message = $this->lang->chat->notGroupChat;
+
+            die($this->app->encrypt($this->output));
+        }
+
+        $chat->dismissDate = helper::now();
+        $chat  = $this->chat->update($chat, $userID);
+        $users = $this->chat->getUserList($status = 'online', array_values($chat->members));
+
+        if(dao::isError())
+        {
+            $this->output->result  = 'fail';
+            $this->output->message = 'Dismiss chat failed.';
+        }
+        else
+        {
+
+            $this->output->result = 'success';
+            $this->output->users  = array_keys($users);
+            $this->output->data   = $chat;
+        }
+
+        die($this->app->encrypt($this->output));
+    }
+
+    /**
      * Change the committers of a chat
      *
      * @param  string $gid
@@ -676,20 +732,20 @@ class chat extends control
     }
 
     /**
-     * Set group for a chat
+     * Set category for a chat
      *
-     * @param  string $gid
-     * @param  string $group
+     * @param  array $gids
+     * @param  string $category
      * @param  int    $userID
      * @access public
      * @return void
      */
-    public function group($gid = '', $group = '', $userID = 0)
+    public function category($gids = array(), $category = '', $userID = 0)
     {
-        $chatList = $this->chat->groupChat($gid, $group, $userID);
+        $chatList = $this->chat->categoryChat($gids, $category, $userID);
         if(dao::isError())
         {
-            $message = 'Set chat group failed.';
+            $message = 'Set chat category failed.';
 
             $this->output->result  = 'fail';
             $this->output->message = $message;
@@ -697,8 +753,8 @@ class chat extends control
         else
         {
             $data = new stdclass();
-            $data->gid  = $gid;
-            $data->group = $group;
+            $data->gids  = $gids;
+            $data->category = $category;
 
             $this->output->result = 'success';
             $this->output->users  = array($userID);
@@ -809,6 +865,14 @@ class chat extends control
 
                 $errors[] = $error;
             }
+        }
+        elseif (!empty($chat->dismissDate))
+        {
+            $error = new stdclass();
+            $error->gid      = $message->cgid;
+            $error->messages = $this->lang->chat->chatHasDismissed;
+
+            $errors[] = $error;
         }
 
         if($errors)

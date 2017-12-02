@@ -102,6 +102,7 @@ const get = (idOrAccount) => {
                 account: idOrAccount,
                 realname: `User-${idOrAccount}`
             });
+            member.temp = true;
         }
     }
     return member;
@@ -201,5 +202,8 @@ export default {
     },
     get depts() {
         return depts;
+    },
+    get hasDepts() {
+        return depts && Object.keys(depts).length;
     }
 };

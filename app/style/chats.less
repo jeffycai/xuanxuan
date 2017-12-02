@@ -31,7 +31,6 @@
     opacity: 0;
   }
 }
-
 .app-chats-menu {
   z-index: 1040;
 }
@@ -54,6 +53,11 @@
       &:after {
         background-color: transparent;
       }
+    }
+
+    &.hover {
+      outline: fade(@color-secondary, 20%) solid (2*@rem);
+      outline-offset: (-3*@rem);
     }
   }
 }
@@ -318,6 +322,8 @@
     position: relative;
     width: (70*@rem);
     height: (70*@rem);
+    display: block;
+    color: transparent;
 
     &:before {
       position: absolute;
@@ -607,7 +613,7 @@
   }
 }
 
-.app-contact-list {
+.app-chat-group-list {
   > .app-member-me {
     background-color: rgba(0,0,0,.05);
     box-shadow: 0 @rem 0 rgba(0,0,0,.1);
@@ -648,6 +654,7 @@
         opacity: .7;
         font-weight: normal;
         color: @color-primary;
+        text-transform: none;
       }
 
       &:hover {
@@ -656,6 +663,26 @@
         > .icon {
           opacity: 1;
         }
+      }
+
+      &.drop-top:before,
+      &.drop-bottom:before {
+        content: ' ';
+        display: block;
+        height: (3*@rem);
+        border: @color-accent dotted (1*@rem);
+        left: @space-xs;
+        right: @space-xs;
+        position: absolute;
+        z-index: 10;
+      }
+
+      &.drop-top:before {
+        top: (-1*@rem);
+      }
+
+      &.drop-bottom:before {
+        bottom: (-1*@rem);
       }
     }
 
@@ -689,5 +716,17 @@
   > .app-group-list > .app-group-list > .app-group-list .app-group-list {
     > .heading {padding-left: (56*@rem);}
     > .item {padding-left: (64*@rem);}
+  }
+}
+
+.app-chats-add-category {
+  .radio {
+    > input {
+      height: (30*@rem);
+    }
+
+    > .sub-control {
+      padding: 0 0 @space-xs (26*@rem);
+    }
   }
 }

@@ -1,5 +1,6 @@
 import DEFAULT from './user-default-config';
 import DelayAction from '../../utils/delay-action';
+import timeSequence from '../../utils/time-sequence';
 
 class UserConfig {
     static DEFAULT = DEFAULT;
@@ -14,6 +15,19 @@ class UserConfig {
             this.onChange(this.lastChange, this);
             this.lastChange = null;
         });
+
+        const groupsCategories = this.groupsCategories;
+        Object.keys(groupsCategories).forEach(x => {
+            const category = groupsCategories[x];
+            if (category.order > 1000000000000) {
+                if (x.startsWith('_')) {
+                    category.order = 100000000000 + timeSequence();
+                } else {
+                    category.order = timeSequence();
+                }
+            }
+        });
+        this.groupsCategories = groupsCategories;
     }
 
     plain() {
@@ -254,12 +268,12 @@ class UserConfig {
         return this.set('ui.chat.contacts.order.role', orders);
     }
 
-    get contactsOrderNormal() {
-        return this.get('ui.chat.contacts.order.normal', {});
+    get contactsCategories() {
+        return this.get('ui.chat.contacts.categories', {});
     }
 
-    set contactsOrderNormal(orders) {
-        return this.set('ui.chat.contacts.order.normal', orders);
+    set contactsCategories(orders) {
+        return this.set('ui.chat.contacts.categories', orders);
     }
 
     get contactsOrderDept() {
@@ -268,6 +282,30 @@ class UserConfig {
 
     set contactsOrderDept(orders) {
         return this.set('ui.chat.contacts.order.dept', orders);
+    }
+
+    get contactsDefaultCategoryName() {
+        return this.get('ui.chat.contacts.category.default');
+    }
+
+    set contactsDefaultCategoryName(name) {
+        return this.set('ui.chat.contacts.category.default', name);
+    }
+
+    get groupsCategories() {
+        return this.get('ui.chat.groups.categories', {});
+    }
+
+    set groupsCategories(orders) {
+        return this.set('ui.chat.groups.categories', orders);
+    }
+
+    get groupsDefaultCategoryName() {
+        return this.get('ui.chat.groups.category.default');
+    }
+
+    set groupsDefaultCategoryName(name) {
+        return this.set('ui.chat.groups.category.default', name);
     }
 }
 

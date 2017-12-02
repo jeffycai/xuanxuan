@@ -3,7 +3,9 @@ import HTML from '../../utils/html-helper';
 import App from '../../core';
 import ContextMenu from '../../components/context-menu';
 import {ChatListItem} from './chat-list-item';
-import {ContactList} from './contact-list';
+import {MenuContactList} from './menu-contact-list';
+import {MenuGroupList} from './menu-group-list';
+import {MenuSearchList} from './menu-search-list';
 import replaceViews from '../replace-views';
 
 const loadChats = (filter, search) => {
@@ -21,18 +23,13 @@ const loadChats = (filter, search) => {
     return chats || [];
 };
 
-const handleItemContextMenu = (chat, e) => {
-    const menuItems = App.im.ui.createChatContextMenuItems(chat);
-    ContextMenu.show({x: e.pageX, y: e.pageY}, menuItems);
-    e.preventDefault();
-};
-
 class MenuList extends Component {
     static propTypes = {
         className: PropTypes.string,
         search: PropTypes.string,
         filter: PropTypes.string,
         children: PropTypes.any,
+        onRequestClearSearch: PropTypes.func,
     };
 
     static defaultProps = {
@@ -40,6 +37,7 @@ class MenuList extends Component {
         search: null,
         filter: null,
         children: null,
+        onRequestClearSearch: null,
     };
 
     static get MenuList() {
@@ -56,26 +54,45 @@ class MenuList extends Component {
         App.events.off(this.dataChangeHandler);
     }
 
+    handleItemContextMenu = (chat, e) => {
+        const menuItems = App.im.ui.createChatContextMenuItems(chat, this.props.filter, this.props.filter === 'groups' ? 'category' : '');
+        ContextMenu.show({x: e.pageX, y: e.pageY}, menuItems);
+        e.preventDefault();
+    };
+
     render() {
         const {
             search,
             filter,
+            onRequestClearSearch,
             className,
             children,
             ...other
         } = this.props;
 
-        if (filter === 'contacts' && !search) {
-            return <ContactList {...this.props} />;
+        if (search) {
+            return <MenuSearchList className={className} filter={filter} search={search} onRequestClearSearch={onRequestClearSearch} {...other} />;
+        } else if (filter === 'contacts') {
+            return <MenuContactList className={className} filter={filter} {...other} />;
+        } else if (filter === 'groups') {
+            return <MenuGroupList className={className} filter={filter} {...other} />;
         }
 
         const chats = loadChats(filter, search);
-        return (<div className={HTML.classes('app-chats-menu-list list scroll-y', className)} {...other}>
-            {
-                chats.map(chat => {
-                    return <ChatListItem onContextMenu={handleItemContextMenu.bind(this, chat)} key={chat.gid} filterType={filter} chat={chat} className="item" />;
-                })
+        let hasActiveChatItem = false;
+        const activeChat = App.im.ui.currentActiveChat;
+        const chatItemsView = chats.map(chat => {
+            if (activeChat && activeChat.gid === chat.gid) {
+                hasActiveChatItem = true;
             }
+            return <ChatListItem onContextMenu={this.handleItemContextMenu.bind(this, chat)} key={chat.gid} filterType={filter} chat={chat} className="item" />;
+        });
+        if (!hasActiveChatItem && activeChat) {
+            chatItemsView.splice(0, 0, <ChatListItem onContextMenu={this.handleItemContextMenu.bind(this, activeChat)} key={activeChat.gid} filterType={filter} chat={activeChat} className="item" />);
+        }
+
+        return (<div className={HTML.classes('app-chats-menu-list list scroll-y', className)} {...other}>
+            {chatItemsView}
             {children}
         </div>);
     }

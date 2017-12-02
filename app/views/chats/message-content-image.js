@@ -29,7 +29,7 @@ class MessageContentImage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            download: false,
+            download: null,
             url: ''
         };
         if (isBrowser) {
@@ -51,20 +51,19 @@ class MessageContentImage extends Component {
     }
 
     componentWillUnmount() {
-        this.unmounted = true;
+        this.mounted = true;
     }
 
     downloadImage(image) {
-        if (this.state.download === false || this.state.download === true) {
+        if (this.state.download === null) {
             API.downloadFile(App.user, image, progress => {
-                if (this.unmounted) return;
+                if (this.mounted) return;
                 this.setState({download: progress});
             }).then(file => {
-                if (this.unmounted) return;
-                this.setState({url: image.src});
-                this.setState({download: true});
+                if (this.mounted) return;
+                this.setState({url: image.src, download: true});
             }).catch(error => {
-                if (this.unmounted) return;
+                if (this.mounted) return;
                 this.setState({download: false});
             });
         }
@@ -103,15 +102,16 @@ class MessageContentImage extends Component {
             />);
         }
         if (image.id && image.send === true) {
-            if (this.state.url) {
+            const imageUrl = this.state.url;
+            if (imageUrl) {
                 return (<img
-                    onContextMenu={isBrowser ? null : this.handleImageContextMenu.bind(this, this.state.url, '')}
+                    onContextMenu={isBrowser ? null : this.handleImageContextMenu.bind(this, imageUrl, '')}
                     title={image.name}
                     alt={image.name}
                     data-fail={Lang.string('file.downloadFailed')}
                     onError={e => e.target.classList.add('broken')}
-                    onDoubleClick={ImageViewer.show.bind(this, this.state.url, null, null)}
-                    src={this.state.url}
+                    onDoubleClick={ImageViewer.show.bind(this, imageUrl, null, null)}
+                    src={imageUrl}
                 />);
             } else if (typeof this.state.download === 'number') {
                 const percent = Math.floor(this.state.download);
@@ -131,9 +131,10 @@ class MessageContentImage extends Component {
                 <div className="label info circle"><Icon name="upload" /> {percent}%</div>
             </Avatar>);
         }
+
         return (<Avatar className="avatar-xl warning-pale text-warning app-message-image-placeholder" icon="image-broken">
             <div className="space-xs" />
-            <div className="label clean circle">{Lang.string('file.uploadFailed')}</div>
+            {image.send === false ? <div className="label clean circle">{Lang.string('file.uploadFailed')}</div> : null}
         </Avatar>);
     }
 }

@@ -57,6 +57,34 @@ class chatModel extends model
     }
 
     /**
+     * Foramt user object
+     *
+     * @param  object   $user
+     * @access public
+     * @return object
+     */
+    public function formatUsers($users) {
+        if (is_array($users))
+        {
+            foreach($users as $user)
+            {
+                $user = $this->formatUsers($user);
+            }
+            return $users;
+        }
+
+        $user = $users;
+
+        $user->id     = (int)$user->id;
+        $user->dept   = (int)$user->dept;
+        $user->avatar = !empty($user->avatar) ? commonModel::getSysURL() . $user->avatar : $user->avatar;
+
+        if(isset($user->deleted)) $user->deleted = (int)$user->deleted;
+
+        return $user;
+    }
+
+    /**
      * Get a user.
      *
      * @param  int    $userID
@@ -65,12 +93,10 @@ class chatModel extends model
      */
     public function getUserByUserID($userID = 0)
     {
-        $user = $this->dao->select('id, account, realname, avatar, role, dept, status, admin, gender, email, mobile, phone, site')->from(TABLE_USER)->where('id')->eq($userID)->fetch();
+        $user = $this->dao->select('id, account, realname, avatar, role, dept, status, admin, gender, email, mobile, phone, site, deleted')->from(TABLE_USER)->where('id')->eq($userID)->fetch();
         if($user)
         {
-            $user->id     = (int)$user->id;
-            $user->dept   = (int)$user->dept;
-            $user->avatar = !empty($user->avatar) ? commonModel::getSysURL() . $user->avatar : $user->avatar;
+            $user = $this->formatUsers($user);
         }
 
         return $user;
@@ -86,8 +112,9 @@ class chatModel extends model
      */
     public function getUserList($status = '', $idList = array(), $idAsKey= true)
     {
-        $dao = $this->dao->select('id, account, realname, avatar, role, dept, status, admin, gender, email, mobile, phone, site')
-            ->from(TABLE_USER)->where('deleted')->eq('0')
+        $dao = $this->dao->select('id, account, realname, avatar, role, dept, status, admin, gender, email, mobile, phone, site, deleted')
+            ->from(TABLE_USER)->where('1')
+            ->beginIF(!$idList)->andWhere('deleted')->eq('0')->fi()
             ->beginIF($status && $status == 'online')->andWhere('status')->ne('offline')->fi()
             ->beginIF($status && $status != 'online')->andWhere('status')->eq($status)->fi()
             ->beginIF($idList)->andWhere('id')->in($idList)->fi();
@@ -100,12 +127,7 @@ class chatModel extends model
             $users = $dao->fetchAll();
         }
 
-        foreach($users as $user)
-        {
-            $user->id     = (int)$user->id;
-            $user->dept   = (int)$user->dept;
-            $user->avatar = !empty($user->avatar) ? commonModel::getSysURL() . $user->avatar : $user->avatar;
-        }
+        $users = $this->formatUsers($users);
 
         return $users;
     }
@@ -212,6 +234,41 @@ class chatModel extends model
     }
 
     /**
+     * Foramt chat object
+     *
+     * @param  object   $chat
+     * @access public
+     * @return object
+     */
+    public function formatChats($chats) {
+        if (is_array($chats))
+        {
+            foreach($chats as $chat)
+            {
+                $this->formatChats($chat);
+            }
+            return $chats;
+        }
+
+        $chat = $chats;
+
+        $chat->id             = (int)$chat->id;
+        $chat->subject        = (int)$chat->subject;
+        $chat->public         = (int)$chat->public;
+        $chat->createdDate    = strtotime($chat->createdDate);
+        $chat->editedDate     = $chat->editedDate == '0000-00-00 00:00:00' ? 0 : strtotime($chat->editedDate);
+        $chat->lastActiveTime = $chat->lastActiveTime == '0000-00-00 00:00:00' ? 0 : strtotime($chat->lastActiveTime);
+        $chat->dismissDate    = $chat->dismissDate == '0000-00-00 00:00:00' ? 0 : strtotime($chat->dismissDate);
+
+        if ($chat->type == 'one2one') $chat->name = '';
+
+        if (isset($chat->star)) $chat->star = (int)$chat->star;
+        if (isset($chat->hide)) $chat->hide = (int)$chat->hide;
+        if (isset($chat->mute)) $chat->mute = (int)$chat->mute;
+        return $chat;
+    }
+
+    /**
      * Get chat list.
      *
      * @param  bool   $public
@@ -220,17 +277,12 @@ class chatModel extends model
      */
     public function getList($public = true)
     {
-        $chats = $this->dao->select('*')->from(TABLE_IM_CHAT)->where('public')->eq($public)->fetchAll();
+        $chats = $this->dao->select('*')->from(TABLE_IM_CHAT)
+            ->where('public')->eq($public)
+            ->beginIF($public)->andWhere('dismissDate')->eq('0000-00-00 00:00:00')->fi()
+            ->fetchAll();
 
-        foreach($chats as $chat)
-        {
-            $chat->id             = (int)$chat->id;
-            $chat->subject        = (int)$chat->subject;
-            $chat->public         = (int)$chat->public;
-            $chat->createdDate    = strtotime($chat->createdDate);
-            $chat->editedDate     = $chat->editedDate == '0000-00-00 00:00:00' ? '' : strtotime($chat->editedDate);
-            $chat->lastActiveTime = $chat->lastActiveTime == '0000-00-00 00:00:00' ? '' : strtotime($chat->lastActiveTime);
-        }
+        $this->formatChats($chats);
 
         return $chats;
     }
@@ -250,7 +302,7 @@ class chatModel extends model
             ->where('type')->eq('system')
             ->fetchAll();
 
-        $chats = $this->dao->select('t1.*, t2.star, t2.hide, t2.mute, t2.group')
+        $chats = $this->dao->select('t1.*, t2.star, t2.hide, t2.mute, t2.category')
             ->from(TABLE_IM_CHAT)->alias('t1')
             ->leftjoin(TABLE_IM_CHATUSER)->alias('t2')->on('t1.gid=t2.cgid')
             ->where('t2.quit')->eq('0000-00-00 00:00:00')
@@ -260,18 +312,7 @@ class chatModel extends model
 
         $chats = array_merge($systemChat, $chats);
 
-        foreach($chats as $chat)
-        {
-            $chat->id             = (int)$chat->id;
-            $chat->subject        = (int)$chat->subject;
-            $chat->public         = (int)$chat->public;
-            $chat->createdDate    = strtotime($chat->createdDate);
-            $chat->editedDate     = $chat->editedDate == '0000-00-00 00:00:00' ? '' : strtotime($chat->editedDate);
-            $chat->lastActiveTime = $chat->lastActiveTime == '0000-00-00 00:00:00' ? '' : strtotime($chat->lastActiveTime);
-            $chat->star           = (int)$chat->star;
-            $chat->hide           = (int)$chat->hide;
-            $chat->mute           = (int)$chat->mute;
-        }
+        $this->formatChats($chats);
 
         return $chats;
     }
@@ -287,14 +328,10 @@ class chatModel extends model
     public function getByGID($gid = '', $members = false)
     {
         $chat = $this->dao->select('*')->from(TABLE_IM_CHAT)->where('gid')->eq($gid)->fetch();
+
         if($chat)
         {
-            $chat->id             = (int)$chat->id;
-            $chat->subject        = (int)$chat->subject;
-            $chat->public         = (int)$chat->public;
-            $chat->createdDate    = strtotime($chat->createdDate);
-            $chat->editedDate     = $chat->editedDate == '0000-00-00 00:00:00' ? '' : strtotime($chat->editedDate);
-            $chat->lastActiveTime = $chat->lastActiveTime == '0000-00-00 00:00:00' ? '' : strtotime($chat->lastActiveTime);
+            $this->formatChats($chat);
 
             if($members) $chat->members = $this->getMemberListByGID($gid);
         }
@@ -453,19 +490,19 @@ class chatModel extends model
     }
 
     /**
-     * Set group for a chat
+     * Set category for a chat
      *
-     * @param  string $gid
-     * @param  string $group
+     * @param  array  $gids
+     * @param  string $category
      * @param  int    $userID
      * @access public
      * @return void
      */
-    public function groupChat($gid = '', $group = '', $userID = 0)
+    public function categoryChat($gids = array(), $category = '', $userID = 0)
     {
         $this->dao->update(TABLE_IM_CHATUSER)
-            ->set('group')->eq($group)
-            ->where('cgid')->eq($gid)
+            ->set('category')->eq($category)
+            ->where('cgid')->in($gids)
             ->andWhere('user')->eq($userID)
             ->exec();
 

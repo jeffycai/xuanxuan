@@ -107,6 +107,20 @@ const chatStar = (msg, socket) => {
     }
 };
 
+const chatCategory = (msg, socket) => {
+    if (msg.isSuccess) {
+        const {gids, category} = msg.data;
+        if (gids && gids.length) {
+            const chatsForUpdate = gids.map(gid => {
+                const chat = chats.get(gid);
+                chat.category = category;
+                return chat;
+            });
+            chats.update(chatsForUpdate);
+        }
+    }
+};
+
 const chatJoinchat = (msg, socket) => {
     if (!msg.isSuccess) {
         return;
@@ -138,6 +152,17 @@ const chatHide = (msg, socket) => {
         if (chat) {
             chat.hide = msg.data.hide;
             chats.update(chat);
+        }
+    }
+};
+
+const chatDismiss = (msg, socket) => {
+    if (msg.isSuccess) {
+        const chat = chats.get(msg.data.gid);
+        if (chat) {
+            chat.dismissDate = msg.data.dismissDate;
+            chats.update(chat);
+            return chat;
         }
     }
 };
@@ -175,8 +200,10 @@ export default {
     'chat/message': chatMessage,
     'chat/history': chatHistory,
     'chat/star': chatStar,
+    'chat/category': chatCategory,
     'chat/joinchat': chatJoinchat,
     'chat/hide': chatHide,
+    'chat/dismiss': chatDismiss,
     'chat/changepublic': chatChangepublic,
     'chat/getpubliclist': chatGetpubliclist,
 };
