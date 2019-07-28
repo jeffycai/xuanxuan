@@ -1,0 +1,80 @@
+/* eslint-disable no-console */
+/**
+ * Setup and run the development server for Hot-Module-Replacement
+ * https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
+ */
+
+import express from 'express';
+import webpack from 'webpack';
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
+import {spawn} from 'child_process';
+import path from 'path';
+import opn from 'opn';
+
+import electronConfig from './webpack.config.development';
+import browserConfig from './webpack.config.browser.development';
+
+// 获取命令行参数
+const argv = require('minimist')(process.argv.slice(2));
+
+// 根据参数判断 targer 是否是 browser
+const isBrowserTarget = argv.target === 'browser';
+if (isBrowserTarget) {
+    console.log('Server for browser target.');
+}
+// 根据 target 参数使用不同的 webpack 配置
+const config = isBrowserTarget ? browserConfig : electronConfig;
+const app = express();
+const compiler = webpack(config);
+const PORT = process.env.PORT || 3000;
+
+// 创建 Webpack 开发中间件
+const wdm = webpackDevMiddleware(compiler, {
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+    },
+    publicPath: config.output.publicPath,
+    stats: {
+        colors: true
+    }
+});
+
+// 使用 Webpack 开发中间件
+app.use(wdm);
+
+// 使用 Webpack 热更新中间件
+app.use(webpackHotMiddleware(compiler));
+
+if (isBrowserTarget) {
+    app.use(express.static(path.resolve(__dirname, '../app/')));
+}
+
+// 创建一个 Web server
+const server = app.listen(PORT, 'localhost', serverError => {
+    if (serverError) {
+        return console.error(serverError);
+    }
+
+    if (argv['start-hot']) {
+        spawn('npm', ['run', 'start-hot'], {shell: true, env: process.env, stdio: 'inherit'})
+            .on('close', code => process.exit(code))
+            .on('error', spawnError => console.error(spawnError));
+    }
+
+    console.log(`Listening at http://localhost:${PORT}`);
+
+    if (isBrowserTarget) {
+        opn(`http://localhost:${PORT}?hot=1`);
+    }
+});
+
+// 终止服务
+process.on('SIGTERM', () => {
+    console.log('Stopping dev server');
+    wdm.close();
+    server.close(() => {
+        process.exit(0);
+    });
+});

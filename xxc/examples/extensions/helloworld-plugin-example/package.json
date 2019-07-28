@@ -1,0 +1,29 @@
+{
+    "name": "helloworld-plugin-example",
+    "displayName": "插件示例",
+    "version": "1.0.0",
+    "description": "此插件用于演示喧喧的插件机制。",
+    "type": "plugin",
+    "icon": "mdi-cards-playing-outline",
+    "accentColor": "#afb42b",
+    "hot": true,
+    "main": "lib/index.js",
+    "author": {
+        "name": "Catouse"
+    },
+    "publisher": "易软天创",
+    "homepage": "https://github.com/easysoft/xuanxuan/tree/master/examples/extensions/helloworld-plugin-example",
+    "repository": {
+        "url": "https://github.com/easysoft/xuanxuan/tree/master/examples/extensions/helloworld-plugin-example",
+        "type": "git"
+    },
+    "bugs": {
+        "url": "https://github.com/easysoft/xuanxuan/issues"
+    },
+    "chatMessageMenu": [
+        {
+            "label": "保存消息文本到文件",
+            "url": "!{EXTENSION}/saveText/?messageId={messageId}"
+        }
+    ]
+}

@@ -4,22 +4,20 @@ http://xuan.im
 
 由[然之协同](http://ranzhico.com)提供的面向企业即时通信解决方案。
 
+官方 QQ 群：**367833155**
+了解项目和计划：http://xuan.5upm.com/product-browse-1.html
+
 ![喧喧](https://raw.githubusercontent.com/easysoft/xuanxuan/master/doc/img/preview.png)
 
 ## 最近更新
 
-🎉 1.3 版本带来了大家期待的扩展机制，提供了更灵活的方式将你到业务与喧喧进行集成；另外还带来了多个实用功能，包括聊天记录搜索、讨论组解散、按部门或角色分组查看联系人、修改密码等。
-
-🎉 扩展机制内置的暗黑主题，让你的体验焕然一新，快来试试吧！
-
-![喧喧](https://raw.githubusercontent.com/easysoft/xuanxuan/master/doc/img/extensions/dark-theme-preview.png)
+🎉 2.3 本次更新增加多语言支持，新增消息批量分享、发送代码等功能，优化了图片浏览交互体验，并修复了一些 bug，欢迎大家更新体验。[查看更新详情→](https://github.com/easysoft/xuanxuan/releases/tag/v2.3.0)
 
 ## 特色功能
 
 * **开聊**：和服务器上的任何用户开聊，收发表情、图片、截屏、文件样样在行；
 * **开源安全**：源码开放，客户端和服务器通信全程加密，安全可靠；
-* **讨论组**：一个人讨论的不过瘾？随时邀请多人组建个性讨论组；
-* **公开讨论组**：将讨论组公开，任何感兴趣的人都可以加入进来；
+* **讨论组和公开讨论组**：一个人讨论的不过瘾？随时邀请多人组建个性讨论组，将讨论组公开，任何感兴趣的人都可以加入进来；
 * **通知及提醒**：与系统桌面环境集成，即时收到新消息通知；
 * **会话管理**：将任意会话（包括讨论组和公开讨论组）置顶，精彩内容不容错过，还可以重命名讨论组、为讨论组设置白名单及浏览会话的所有消息历史记录；
 * **通讯录**：浏览企业成员资料和联系信息；
@@ -38,7 +36,7 @@ http://xuan.im
 
 ### 浏览器客户端
 
-浏览器客户端试用请访问：https://easysoft.github.io/xuanxuan/1.2.0/
+浏览器客户端试用请访问：[https://demo.ranzhi.net](https://demo.ranzhi.net/?server=https://demo.ranzhi.net&account=demo1&password=123456&loginTip=%E6%B5%8B%E8%AF%95%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8D%E6%94%AF%E6%8C%81%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%EF%BC%8C%E5%9B%BE%E7%89%87%E5%92%8C%E6%96%87%E4%BB%B6%E7%9B%B8%E5%85%B3%E5%8A%9F%E8%83%BD%E4%BC%9A%E5%8F%97%E9%99%90%E5%88%B6%EF%BC%8C%E4%BD%86%E4%BB%8D%E7%84%B6%E6%94%AF%E6%8C%81%E5%8F%91%E9%80%81%E5%B0%8F%E4%BA%8E%2010kb%20%E7%9A%84%E5%9B%BE%E7%89%87%E3%80%82%E4%BD%A0%E8%BF%98%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8%E9%99%A4%20demo%20%E4%B9%8B%E5%A4%96%E7%9A%84%E5%85%B6%E4%BB%96%E8%B4%A6%E5%8F%B7%E7%99%BB%E5%BD%95%EF%BC%8C%E5%8C%85%E6%8B%AC%20demo1%E3%80%81demo2...demo10%E3%80%82#/chats/groups)
 
 注意：你需要为你的服务器端部署通过官方验证的证书才可以使用浏览器端客户端。
 
@@ -58,16 +56,18 @@ http://xuan.im
 
 客户端与服务器端 API 参考：[API 文档](http://xuan.im/page/3.html)。服务器端 API 同样是开放的，你可以使用自己熟悉的技术（例如 node.js、go、swift）实现自己的服务器端。
 
-官方默认的服务器使用 `go` 语言实现（简称为 `xxd` 服务），你可以在 [`/server/xxd/`](https://github.com/easysoft/xuanxuan/tree/master/server/xxd) 目录下找到源代码。xxd 服务提供了 `WebSocket` 和 `https` 接口供客户端使用。
+官方默认的服务器使用 `go` 语言实现（简称为 `xxd` 服务），你可以在 [`/xxd/`](https://github.com/easysoft/xuanxuan/tree/master/xxd) 目录下找到源代码。xxd 服务提供了 `WebSocket` 和 `https` 接口供客户端使用。
 
 `xxd` 服务本身并不存储和管理用户资料和消息数据，而是使用应用更为广泛的 http 协议与另一个服务器（简称 `http` 服务）通信。这样你只需要在你自己的网站上开发一系列 `http` 接口即可为你的网站用户启用喧喧。
 
-官方默认提供的 `http` 服务是基于开源协同办公软件 [然之协同](https://github.com/easysoft/rangerteam) 开发，你可以在 [`/server/ranzhi/`](https://github.com/easysoft/xuanxuan/tree/master/server/ranzhi) 目录下找到相关源代码。然之协同服务器部署请参考：[服务器部署指南](http://xuan.im/page/2.html)。
+官方默认提供的后段服务是基于开源协同办公软件 [然之协同](https://github.com/easysoft/rangerteam) 开发，你可以在 [`/ranzhi/`](https://github.com/easysoft/xuanxuan/tree/master/ranzhi) 目录下找到相关源代码。然之协同服务器部署请参考：[服务器部署指南](http://xuan.im/page/2.html)。
+
+在 1.4 版本之后，还提供了独立的服务器端 XXB，这样可以不依赖然之协同办公系统，XXB 服务器使用参考 http://xuan.im/page/2.html 。
 
 这里有一个公开的测试服务器供使用：
 
 ```
-地址：https://demo.ranzhi.org
+地址：https://demo.ranzhi.net
 用户：demo
 密码：demo
 
@@ -82,7 +82,7 @@ http://xuan.im
 客户端主要使用的技术为 `Webpack + Electron + React`。使用下面的步骤快速进入开发状态：
 
 1. 下载源码：`git clone https://github.com/easysoft/xuanxuan.git`；
-2. 在源码目录执行：`npm install`；
+2. 进入源码目录的子目录 `xxc/`，执行：`npm install`；
 3. 启动 react hot server，执行：`npm run hot-server`；
 4. 启动客户端，执行：`npm run start-hot`。
 

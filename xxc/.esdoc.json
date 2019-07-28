@@ -1,0 +1,21 @@
+{
+    "source": "./app/",
+    "destination": "../docs/client/api",
+    "includes": ["\\.js$"],
+    "excludes": ["bundle\\.js$", "main\\.js$", "jquery"],
+    "plugins": [
+        {"name": "esdoc-jsx-plugin", "option": {"enable": true}},
+        {"name": "esdoc-ecmascript-proposal-plugin", "option": {"all": true}},
+        {"name": "esdoc-standard-plugin", "option": {
+            "lint": {"enable": false},
+            "accessor": {"access": ["public", "protected", "private"], "autoPrivate": true},
+            "unexportedIdentifier": {"enable": false},
+            "brand": {
+                "title": "API"
+            }
+        }},
+        {"name": "esdoc-react-plugin"},
+        {"name": "esdoc-inject-style-plugin", "option": {"enable": true, "styles": ["../docs/lib/docsify/themes/vue.css", "../docs/styles/app.css", "../docs/styles/esdoc.css"]}},
+        {"name": "esdoc-inject-script-plugin", "option": {"enable": true, "scripts": ["../docs/lib/esdoc/custom.js"]}}
+    ]
+}

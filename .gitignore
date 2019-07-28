@@ -1,6 +1,6 @@
 # Logs
 logs
-*.log
+*.log*
 
 # Runtime data
 pids
@@ -26,35 +26,56 @@ build/Release
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
-app/node_modules
+xxc/node_modules
 
 # OSX
 .DS_Store
 
 # App packaged
-release
-app/main.js
-app/main.js.map
-app/bundle.js
-app/bundle.js.map
-app/style.css
-app/style.css.map
-app/dist
-app/web-dist
+xxc/release
+xxc/app/main.js
+xxc/app/main.js.map
+xxc/app/bundle.js
+xxc/app/bundle.js.map
+xxc/app/style.css
+xxc/app/style.css.map
+xxc/app/dist
+xxc/app/web-dist
+xxc/app/manifest.json
+xxc/app/media-build
 
 # User custom files
+*.custom.*
 *.custom
+*-backup
+xxc/build/build-config.*.json
+xxc/build/electron-config.json
+xxc/build/electron-builder.json
+xxc/build/build-time-cost.json
+xxc/build/build.*
 
 .idea
-.vscode/settings.json
+xxc/.vscode/settings.json
 
 # backyard settings
-server/db/upgradebackyard.sql
-server/xxd/certificate
+ranzhi/db/upgradebackyard.sql
+xxd/certificate
+xxd/log
+
+# test files
+xxc/test
 
 # documentation
-docs
+xxc/docs
 issues.md
 
 # xxd tmp files
-server/xxd/tmpfile
+xxd/tmpfile
+
+# documentation
+docs/output
+docs/pdf
+docs/*/*-convert.md
+docs/**/*.md
+docs/**/*.md
+docs/

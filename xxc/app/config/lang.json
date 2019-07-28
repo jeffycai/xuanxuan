@@ -1,0 +1,11 @@
+{
+    "ALL": [
+        {"name": "zh-cn", "label": "简体中文"},
+        {"name": "zh-tw", "label": "繁體中文"},
+        {"name": "en", "label": "English"}
+    ],
+    "zh-cn": {
+        "app.title": "喧喧",
+        "common.littlexx": "小喧喧"
+    }
+}

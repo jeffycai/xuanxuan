@@ -1,0 +1,24 @@
+{
+    "name": "helloworld-app-example",
+    "displayName": "示例应用",
+    "version": "1.0.0",
+    "description": "此扩展用于演示喧喧的应用扩展机制。从一个自定义的 React 组件来创建应用界面。",
+    "type": "app",
+    "appIcon": "mdi-react",
+    "appAccentColor": "#aa00ff",
+    "appType": "insideView",
+    "main": "lib/index.js",
+    "hot": true,
+    "author": {
+        "name": "Catouse"
+    },
+    "publisher": "易软天创",
+    "homepage": "https://github.com/easysoft/xuanxuan/tree/master/examples/extensions/helloworld-app-example",
+    "repository": {
+        "url": "https://github.com/easysoft/xuanxuan/tree/master/examples/extensions/helloworld-app-example",
+        "type": "git"
+    },
+    "bugs": {
+        "url": "https://github.com/easysoft/xuanxuan/issues"
+    }
+}

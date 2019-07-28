@@ -19,10 +19,14 @@
 
 如果你是 nodejs 开发老手，请了解如下关键命令，并且跳过下面的 _详细步骤_ 章节。
 
-```
+```bash
 $ git clone https://github.com/easysoft/xuanxuan.git
+$ cd xuanxuan/xxc
 $ npm install
-$ npm run dev
+$ npm run hot-server
+
+# 新开一个命令行窗口执行
+$ npm run start-hot
 ```
 
 ## 详细步骤
@@ -31,7 +35,7 @@ $ npm run dev
 
 ### 1. 安装 Nodejs 和 npm
 
-访问 Nodejs 官网下载并安装 nodejs，选择一个适合你的操作系统的安装包，按照官方提示安装即可。虽然不同的 nodejs 版本都可以运行喧喧，但可能需要额外的配置，建议你下载与喧喧开发者相同版本的 nodejs 版本。喧喧开发人员目前使用的 nodejs 环境版本是 **`7.8.0`**，可以在这个页面 https://nodejs.org/zh-cn/download/releases/ 找到对应版本的下载地址。
+访问 Nodejs 官网下载并安装 nodejs，选择一个适合你的操作系统的安装包，按照官方提示安装即可。虽然不同的 nodejs 版本都可以运行喧喧，但可能需要额外的配置，建议你下载与喧喧开发者相同版本的 nodejs 版本。喧喧开发人员目前使用的 nodejs 环境版本是 **`8.11.3`**，npm 版本为 `5.6.0`，可以在这个页面 https://nodejs.org/zh-cn/download/releases/ 找到对应版本的下载地址。
 
 Windows 和 Mac 系统用户可以直接下载非常方便的一键安装包，安装完成后打开命令行窗口（Mac 下为应用 “终端”，Windows 下为程序 “命令提示符” 或 “PowerShell”）输入如下命令查询安装后的版本号，如果输出正确版本号说明安装成功。
 
@@ -42,7 +46,7 @@ $ node -v
 输出：
 
 ```
-v7.8.0
+v8.11.3
 ```
 
 如果 nodejs 安装成功，npm 也会一起安装完成，输入 `npm -v` 来检查已安装的 npm 版本。
@@ -54,7 +58,7 @@ $ npm -v
 输出：
 
 ```
-4.2.0
+5.6.0
 ```
 
 ### 2. 下载喧喧源码
@@ -65,7 +69,11 @@ $ npm -v
 $ git clone https://github.com/easysoft/xuanxuan.git
 ```
 
-下载完成后就会在你的系统创建一个名称为 `xuanxuan` 的目录，该目录内就是喧喧最新的源码。
+下载完成后就会在你的系统创建一个名称为 `xuanxuan` 的目录，该目录内就是喧喧最新的源码，其中客户端源码在 `xxc` 目录，以下所有操作都是在 `xxc` 目录下进行。
+
+```
+$ cd xuanxuan/xxc
+```
 
 如果你还没有安装或使用过 [git](https://git-scm.com/) 也不用担心，你仍然可以访问 [喧喧在 Github 上的页面](https://github.com/easysoft/xuanxuan)，直接点击 [“Download ZIP”](https://github.com/easysoft/xuanxuan/archive/master.zip) 来下载源码。下载完成后将 zip 文件解压到 `xuanxuan` 目录下即可。
 
@@ -80,20 +88,6 @@ $ npm install
 #### 安装失败？
 
 此步骤通常需要几分钟，视网络环境执行的时间不定。如果你使用的是国内网络，可能导致某些依赖模块安装失败。下面介绍使用国内 **[淘宝 NPM 镜像](https://npm.taobao.org/)** 来加速安装过程，确保安装成功。以下经验适合任何基于 nodejs 的项目。
-
-##### 使用 cnpm
-
-在你的终端执行：
-
-```
-$ npm install -g cnpm --registry=https://registry.npm.taobao.org
-```
-
-这样你就可以使用 `cnpm` 命令来代替 `npm` 了，这样可以执行如下命令来安装喧喧的项目依赖：
-
-```
-$ cnpm install
-```
 
 ##### 将镜像地址写入 `~/.npmrc`
 
@@ -116,9 +110,9 @@ $ npm info zui
 
 ```
 dist:
-   { shasum: '134f986bc53a62be2310a0438918b8a17b58c80c',
-     size: 9957159,
-     noattachment: false,
+    { shasum: '134f986bc53a62be2310a0438918b8a17b58c80c',
+        size: 9957159,
+        noattachment: false,
      tarball: '**http://registry.npm.taobao.org/zui/download/zui-1.6.0.tgz**' },
   publish_time: 1489730305654 }
 ```
@@ -135,13 +129,10 @@ dist:
 $ export ELECTRON_MIRROR="https://npm.taobao.org/mirrors/electron/"
 ```
 
-Windows 用户可以打开系统属性面板来设置环境变量或者执行如下命令：
-
-```
-$ set ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/
-```
+Windows 用户需要打开系统属性面板来设置环境变量（变量名称为 `ELECTRON_MIRROR`，值为 `https://npm.taobao.org/mirrors/electron/`）。
 
 做了如上设置后，请重新执行 `npm install`。
+Windows 用户注意，设置新的环境变量之后需要重新打开一个命令行窗口，所设置的环境变量才会生效。
 
 ##### 单独安装 Electron
 
@@ -151,16 +142,16 @@ $ set ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/
 ELECTRON_MIRROR="https://npm.taobao.org/mirrors/electron/" npm install electron
 ```
 
-Windows 用户无法运行上面的命令，需要先安装 `cross-env`，执行：
+Windows 用户无法运行上面的命令，仍然
 
 ```
-$ npm install cross-env
+$ npm install cross-env -g
 ```
 
 然后再执行：
 
 ```
-ELECTRON_MIRROR="https://npm.taobao.org/mirrors/electron/" npm install electron
+cross-env ELECTRON_MIRROR="https://npm.taobao.org/mirrors/electron/" npm install electron
 ```
 
 这样就可以强制从淘宝镜像安装 Electron。
@@ -206,15 +197,9 @@ $ npm run start-hot
 
 ![npm run start-hot 运行成功截图](https://raw.githubusercontent.com/easysoft/xuanxuan/master/doc/img/npm_run_start-hot.png)
 
-#### 一步到位
+#### 首次启动时间过长
 
-启动 React 热更新服务器和客户端可以通过一个命令一步到位：
-
-```
-$ npm run dev
-```
-
-不过这种方式的缺点是无法单独查看热更新服务器和客户端调试的输出信息。你可以根据自己的习惯选择合适的启动方式。
+当首次执行 `npm run start-hot` 时，Electron 会尝试下载安装 `REACT_DEVELOPER_TOOLS` 方便进行 React 开发调试，此时命令行会显示 `Install electron development extensions...`。正常情况下只需要几分钟，但在网络不佳的话可能导致首次启动时间过长。如果超过5分钟主界面还没启动，可以尝试禁用自动安装 Electron 扩展，方法是使用 `npm run start-hot-fast` 代替 `npm run start-hot` 命令。
 
 #### 恭喜
 
@@ -327,79 +312,87 @@ $ brew install rpm
   </thead>
   <tbody>
     <tr>
-      <td><code>/app/</code></td>
+      <td><code>/xxc/</code></td>
+      <td>客户端项目</td>
+    </tr>
+    <tr>
+      <td><code>/xxc/app/</code></td>
       <td>客户端源代码</td>
     </tr>
     <tr>
-      <td><code>/app/assets/</code></td>
+      <td><code>/xxc/app/assets/</code></td>
       <td>客户端使用到的第三发静态资源目录</td>
     </tr>
     <tr>
-      <td><code>/app/media/</code></td>
+      <td><code>/xxc/app/media/</code></td>
       <td>客户端上用到的图片、语音及表情资源</td>
     </tr>
     <tr>
-      <td><code>/app/lang/</code></td>
+      <td><code>/xxc/app/lang/</code></td>
       <td>客户端语言配置文件目录，目前只有中文简体文件 `zh-cn.json</td></td>
     </tr>
     <tr>
-      <td><code>/app/style/</code></td>
+      <td><code>/xxc/app/style/</code></td>
       <td>客户端界面样式表文件目录，通常为 Less 文件</td>
     </tr>
     <tr>
-      <td><code>/app/utils/</code></td>
+      <td><code>/xxc/app/utils/</code></td>
       <td>客户端用到的工具组件</td>
     </tr>
     <tr>
-      <td><code>/app/network/</code></td>
+      <td><code>/xxc/app/network/</code></td>
       <td>客户端内部与网络相关的接口模块</td>
     </tr>
     <tr>
-      <td><code>/app/config/</code></td>
-      <td>客户端配置文件</td>
+      <td><code>/xxc/app/config/</code></td>
+      <td>客户端配置文件</td>
     </tr>
     <tr>
-      <td><code>/app/platform</code></td>
+      <td><code>/xxc/app/platform</code></td>
       <td>客户端与平台相关的模块</td>
     </tr>
     <tr>
-      <td><code>/app/core/</code></td>
+      <td><code>/xxc/app/core/</code></td>
       <td>客户端核心模块</td>
     </tr>
     <tr>
-      <td><code>/app/components/</code></td>
-      <td>客户端界面用到的通用 React 组件</td>
+      <td><code>/xxc/app/components/</code></td>
+      <td>客户端界面用到的通用 React 组件</td>
     </tr>
     <tr>
-      <td><code>/app/views/</code></td>
+      <td><code>/xxc/app/views/</code></td>
       <td>客户端界面 React 视图组件</td>
     </tr>
     <tr>
-      <td><code>/app/main.development.js</code></td>
+      <td><code>/xxc/app/main.development.js</code></td>
       <td>Electron 入口文件</td>
     </tr>
     <tr>
-      <td><code>/app/index.html</code></td>
+      <td><code>/xxc/app/index.html</code></td>
       <td>主窗口 HTML 代码文件</td>
     </tr>
     <tr>
-      <td><code>/app/index.js</code></td>
+      <td><code>/xxc/app/index.js</code></td>
       <td>Electron 主窗口入口代码文件</td>
     </tr>
     <tr>
-      <td><code>/resources/</code></td>
+      <td><code>/xxc/resources/</code></td>
       <td>Electron 打包时用到的资源文件目录</td>
     </tr>
     <tr>
-      <td><code>/server/</code></td>
-      <td>服务器端源代码目录</td>
+      <td><code>/xxc/build/</code></td>
+      <td>Webpack 配置文件，开发模式脚本以及 Electron 安装包构建相关脚本</td>
     </tr>
     <tr>
-      <td><code>/server/xxd/</code></td>
-      <td>XXD 服务器端源代码目录</td>
+      <td><code>/xxb/</code></td>
+      <td>后端服务器源代码目录</td>
     </tr>
     <tr>
-      <td><code>/server/ranzhi</code></td>
+      <td><code>/xxd/</code></td>
+      <td>XXD 中间服务器端源代码目录</td>
+    </tr>
+    <tr>
+      <td><code>/ranzhi</code></td>
       <td>然之协同服务器端扩展源代码目录</td>
     </tr>
   </tbody>

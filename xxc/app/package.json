@@ -1,0 +1,25 @@
+{
+    "name": "xuanxuan",
+    "productName": "xuanxuan",
+    "displayName": "喧喧",
+    "version": "2.3.0",
+    "description": "企业即时通讯平台",
+    "main": "./main.js",
+    "author": {
+        "name": "easysoft",
+        "email": "sunhao@cnezsoft.com"
+    },
+    "homepage": "http://xuan.im",
+    "company": "QingDao Nature Easy Soft Network Technology Co,LTD.",
+    "license": "ZPL 1.2",
+    "bugs": {
+        "url": "https://github.com/easysoft/xuanxuan/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/easysoft/xuanxuan.git"
+    },
+    "dependencies": {
+        "jquery": "^3.3.1"
+    }
+}

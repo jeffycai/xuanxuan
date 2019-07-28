@@ -1,5 +1,458 @@
 # 更新记录
 
+## v 2.3.0
+
+[2019-01-04]
+
+本次更新增加多语言支持，新增消息批量分享、发送代码等功能，优化了图片浏览交互体验，并修复了一些 bug，欢迎大家更新体验。
+
+### 更新日志
+
+* 新增 对界面多语言的支持，现在可以将界面语言切换为简体中文、繁体中文或英文；
+* 新增 分享消息到其他讨论组或联系人聊天功能，支持同时分享到多个聊天；
+* 新增 发送代码功能；
+* 优化 图标浏览体验，允许使用滚轮来放大或缩小图标，双击和重制缩放状态，使用 <kbd>ESC</kbd> 来退出浏览模式；
+* 优化 主界面左侧导航外观，更改了图标以及交互时的颜色样式；
+* 优化 导航上未读消息徽标数目，现在未读数目不包括已被设置为免打扰或已存档的聊天消息；
+* 优化 扩展应用右键菜单功能，增加复制当前链接功能，在浏览器中打开链接时会使用免登录网址（不再需要在浏览器里面再次登录）；
+* 优化 登录界面；
+* 修复 了退出程序时有可能出现错误对话框的问题；
+* 修复 发送大文件下载链接导致界面卡死的问题；
+* 修复 对已经过期（非当天）的网址卡片仍然会尝试渲染的问题；
+* 修复 在 Mac 上点击程序坞上的应用图标没有激活最后一个应用窗口的问题；
+* 修复 设置聊天白名单复选框勾选没有反应的问题（[bug #67](http://xuan.5upm.com/bug-view-67.html)）；
+* 修复 在 Windows 扩展图标有时无法正确显示的问题；
+* 修复 应用内页面有时无法激活输入框的问题（[electron issue #15318](https://github.com/electron/electron/issues/15318)、[issue #14474](https://github.com/electron/electron/issues/14474)）；
+* 修复 截图操作之后同时出现两个通知栏图标的问题；
+* 开发相关：
+  * 客户端：
+    * 增加 复制聊天 ID 功能（在聊天列表上点击右键复制 ID，或者点击讨论组图标进行复制）；
+    * 增加 `notificationSenders` 扩展配置项，使得扩展可以为通知会话提供消息通知发送方信息；
+    * 增加 `ui.login.skipHTTPSecurityAlert`、`todo.enable` 等运行时配置；
+    * 增加 `xxc://command` 链接命令接口，支持 `webview`，并提供了关闭对话框、发送框添加文本等常用操作的命令形式；
+    * 优化 webview 类型卡片，现在支持动态调整卡片大小，并且提供了自动调整高度的选项；
+    * 优化 了对可替换组件的调用方式，现在不再使热更新失效了；
+    * 优化 固定扩展应用图标到导航功能，现在支持提供图标在导航上显示的顺序；
+    * 优化 打包脚本，现在支持自定义安装程序文件名，并提供创建 zip 压缩包相关选项；
+    * MDI 图标库升级到 `3.2.89`；
+    * Electron 升级到 `4.0.0`，并移除了对 `abortcontroller-polyfill` 模块的依赖；
+    * 修复 了扩展远程设置有时失效的问题。
+  * 后端（xxb）:
+    * 数据表 `sys_user` 中的 `status` 字段名称变更为 `clientStatus`；
+
+### 下载地址
+
+本次 2.3.0 更新只包括客户端部分，XXD 仍然是 2.2.0 版本，XXB 版本为 2.1.0。
+
+* Windows 7+：[64 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.win64.setup.exe)、[64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.win64.zip.exe)、[32 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.win32.setup.exe)、[32 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.win32.zip.exe)、[64 位 Debug 安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.win.debug.setup.exe)；
+* MacOS：[xuanxuan.2.3.0.mac.dmg](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.mac.dmg)；
+* Linux：[64 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.linux.x64.tar.gz)、[64 位（.deb）](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.linux.amd64.deb)、[64 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.linux.x86_64.rpm)、[32 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.linux.ia32.tar.gz)、[32 位（.deb）](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.linux.i386.deb)、[32 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.linux.i686.rpm)；
+* 浏览器端：[xuanxuan.2.3.0.browser.zip](http://dl.cnezsoft.com/xuanxuan/2.3.0/xuanxuan.2.3.0.browser.zip)；
+* XXD Server： [windows 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xxd.2.2.0.win64.zip)、[windows 32 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xxd.2.2.0.win32.zip)、[mac 压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xxd.2.2.0.mac.tar.gz)、[linux 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xxd.2.2.0.linux.x64.tar.gz)、[linux 32 位 压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xxd.2.2.0.linux.ia32.tar.gz)；
+* 服务器端：
+  * XXB 2.1：[Windows 64位一键安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.win64.exe)、[Windows 32位一键安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.win32.exe)、[Linux 64位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.zbox_64.tar.gz)、[Linux 32位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.zbox_32.tar.gz)、[Linux rpm安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb-2.1.0-1.noarch.rpm)、[Linux deb安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb_2.1.0_1_all.deb)；
+  * 然之：[5.0.0 稳定版](https://www.ranzhi.org/download/5.0.stable-134.html)、[扩展包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.ranzhi.2.2.0.zip)。
+
+## v 2.2.0
+
+[2018-12-14]
+
+本次更新新增应用窗口多开和固定扩展应用图标到导航上的功能，修复了大量已知问题。
+
+### 功能预览
+
+#### 多开窗口
+
+在 Windows 上点击应用程序图标会提示启动一个新窗口。
+
+![multi-windows-2.png](https://raw.githubusercontent.com/easysoft/xuanxuan/master/docs/imgs/multi-windows-2.png)
+
+在 Mac 上程序坞应用图标右键来创建一个新窗口。
+
+![multi-windows.png](https://raw.githubusercontent.com/easysoft/xuanxuan/master/docs/imgs/multi-windows.png)
+
+#### 固定扩展应用启动图标
+
+将扩展应用启动图标固定到导航上。
+
+![pin-app-on-navbar.png](https://raw.githubusercontent.com/easysoft/xuanxuan/master/docs/imgs/pin-app-on-navbar.png)
+
+### 更新日志
+
+* 新增 打开多个喧喧应用窗口功能（现在不允许启动多个程序实例），在每个窗口中可以登录一个新的账号，解决了启动多个程序实例导致第一个程序之外的程序无法使用数据库（[electron/electron issue #10792](https://github.com/electron/electron/issues/10792)）；
+* 新增 将扩展应用启动图标固定到导航上的功能；
+* 优化 了头像的显示，当用户头像图片下载失败时会使用一个默认的头像代替；
+* 优化 了在浏览器上复制 HTML 格式消息内容功能（仅浏览器端版本）；
+* 修复 了在火狐浏览器上无法滚动浏览消息的问题（仅浏览器端版本）；
+* 修复 了当用户在联系人菜单界面发送消息时没有自动切换到最近聊天菜单界面的问题；
+* 修复 了在 Windows 上极少情况下导致收到新消息时导航没有选中项且聊天列表没有新消息提示的问题；
+* 修复 了在浏览器端有时因为判断窗口是否激活失效导致通知机制没有起作用的问题；
+* 修复 了有时加载历史记录失败导致一直显示正在加载中动画图标的问题；
+* 修复 了 Markdown 语法指南链接无法访问的问题；
+* 开发相关：
+  * 客户端：
+    * 新增 从可执行程序所在目录读取运行时配置；
+    * 新增 `ui.chat.denyChatFromMemberProfile`、`ui.showDailySignMessage`、`ui.chat.disableChatHistory`、`markdown.hintUrl` 等大量运行时配置选项，用于打包个性化版本；
+    * 新增 对服务器端多语言的支持（客户端界面多语言仍在开发中）；
+    * 优化 `npm run start` 命令，现在启动热更新服务器后会直接在浏览器中打开浏览器端版本；
+    * 优化 了打包脚本，规范脚本参数，增加了更多打包选项；
+    * 优化 了自动更新用户缓存列表机制，当接收到一个系统中不存在的用户 `chat/login` 消息时会自动记录该新用户信息到列表中；
+    * 修复 了使用扩展实例对象调用 `getEntry()` 失效的问题；
+  * XXD：
+    * 增加对后端多语言模式的兼容；
+    * 调整配置文件中（`config/xxd.conf`）配置项节点名称并兼容 2.1.0；
+    * 修复在特定环境中文件下载失败的问题。
+
+### 下载地址
+
+* Windows 7+：[64 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.win64.setup.exe)、[64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.win64.zip.exe)、[32 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.win32.setup.exe)、[32 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.win32.zip.exe)、[64 位 Debug 安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.win.debug.setup.exe)；
+* MacOS：[xuanxuan.2.2.0.mac.dmg](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.mac.dmg)；
+* Linux：[64 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.linux.x64.tar.gz)、[64 位（.deb）](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.linux.amd64.deb)、[64 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.linux.x86_64.rpm)、[32 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.linux.ia32.tar.gz)、[32 位（.deb）](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.linux.i386.deb)、[32 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.linux.i686.rpm)；
+* 浏览器端：[xuanxuan.2.2.0.browser.zip](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.2.2.0.browser.zip)；
+* XXD Server： [windows 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xxd.2.2.0.win64.zip)、[windows 32 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xxd.2.2.0.win32.zip)、[mac 压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xxd.2.2.0.mac.tar.gz)、[linux 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xxd.2.2.0.linux.x64.tar.gz)、[linux 32 位 压缩包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xxd.2.2.0.linux.ia32.tar.gz)；
+* 服务器端：
+  * XXB 2.1：[Windows 64位一键安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.win64.exe)、[Windows 32位一键安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.win32.exe)、[Linux 64位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.zbox_64.tar.gz)、[Linux 32位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.zbox_32.tar.gz)、[Linux rpm安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb-2.1.0-1.noarch.rpm)、[Linux deb安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb_2.1.0_1_all.deb)；
+  * 然之：[5.0.0 稳定版](https://www.ranzhi.org/download/5.0.stable-134.html)、[扩展包](http://dl.cnezsoft.com/xuanxuan/2.2.0/xuanxuan.ranzhi.2.2.0.zip)。
+
+
+## v 2.1.0
+
+[2018-10-11]
+
+本次更新增加了对 LDAP 登录模式的支持，优化了界面交互，修复了大量已知问题。
+
+### 更新明细
+
+* 增加 了 LDAP 登录模式（需要服务器支持）；
+* 优化 了消息卡片交互，增加了右键菜单；
+* 优化 了消息卡片渲染策略，现在只对当天的消息卡片进行自动渲染，非当天发送的消息卡片需要手动点击加载按钮进行渲染；历史记录中的消息卡片不进行自动渲染，任何时候都需要手动点击进行渲染；
+* 优化 了扩展列表中远程扩展右键菜单；
+* 优化 了登录界面，当开机启动不可用时不显示相关功能菜单；
+* 优化 了Markdown 转换性能，并禁止了使用 Markdown 中的 HTML 元素上的 style 属性；
+* 优化 了聊天成员列表，现在当联系人从系统删除时，被删除的联系人自动从成员列表移除（[BUG #62](http://xuan.5upm.com/bug-view-62.html)）；
+* 优化 了网址转卡片性能；
+* 优化 了 `@成员` 策略，现在匹配用户更准确（[BUG #64](http://xuan.5upm.com/bug-view-64.html)）;
+* 修复 了一些网址卡片显示为乱码的问题（例如淘宝和京东的商品链接，[BUG #59](http://xuan.5upm.com/bug-view-59.html)）；
+* 修复 了聊天侧边栏成员列表右键菜单失效的问题；
+* 修复 了当客户端窗口已经激活时有时通知策略没有按照预期执行的问题；
+* 修复 了从 1.6.0 及以下版本升级时迁移数据导致启动过慢的问题；
+* 修复 了浏览器上激活消息输入框时提示剪切板图片的错误；
+* 修复 了当不启用 Markdown 格式时，消息中的链接没有自动转为可点击元素的问题；
+* 修复 了拷贝纯文本消息有时文本内容不正确的问题；
+* 修复 了有时右键保存图片失效的问题；
+* 修复 了 socket 连接关闭时有可能引发错误的问题；
+* 修复 了邀请他人并创建新讨论组时广播消息错误的问题；
+* 修复 了与部分服务器后端集成时在客户端修改密码失败的问题（[BUG #60](http://xuan.5upm.com/bug-view-60.html)）；
+* 开发相关：
+  * 客户端：
+    * 增加 了 `ui.chat.urlInspector` 配置开关，网址转卡片功能可以通过配置禁用；
+    * 增加 了 `ui.page.start.size` 和 `ui.page.more.size` 配置用于设置列表默认显示条目数目以及点击更多按钮加载的条目数目；
+    * 增加 了新的打包配置机制；
+    * 增加 了对服务器 `chat/extensions` 接口中扩展对象 `data` 属性的支持，通过扩展对象 `serverData` 访问；
+  * XXB：
+    * 新增 了集成通用的免登录功能；
+    * 优化 了 `chat/extensions` 接口内容；
+  * 其他：
+    * 通过[扩展](https://github.com/easysoft/xuanxuan/tree/master/xxc/examples/extensions/ranzhi)实现与然之后端深度集成（需要然之 4.9 以上版本）。
+
+### 下载地址
+
+* Windows 7+：[64 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.win64.setup.exe)、[64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.win64.zip.exe)、[32 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.win32.setup.exe)、[32 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.win32.zip.exe)、[64 位 Debug 安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.win.debug.setup.exe)；
+* MacOS：[xuanxuan.2.1.0.mac.dmg](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.mac.dmg)；
+* Linux：[64 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.linux.x64.tar.gz)、[64 位（.deb）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.linux.amd64.deb)、[64 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.linux.x86_64.rpm)、[32 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.linux.ia32.tar.gz)、[32 位（.deb）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.linux.i386.deb)、[32 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.linux.i686.rpm)；
+* 浏览器端：[xuanxuan.2.1.0.browser.zip](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.2.1.0.browser.zip)；
+* XXD Server： [windows 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxd.2.1.0.win64.zip)、[windows 32 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxd.2.1.0.win32.zip)、[mac 压缩包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxd.2.1.0.mac.tar.gz)、[linux 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxd.2.1.0.linux.x64.tar.gz)、[linux 32 位 压缩包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxd.2.1.0.linux.ia32.tar.gz)；
+* 服务器端：
+  * XXB 2.1：[Windows 64位一键安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.win64.exe)、[Windows 32位一键安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.win32.exe)、[Linux 64位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.zbox_64.tar.gz)、[Linux 32位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb.2.1.0.zbox_32.tar.gz)、[Linux rpm安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb-2.1.0-1.noarch.rpm)、[Linux deb安装包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xxb_2.1.0_1_all.deb)；
+  * 然之：[4.9.0 稳定版](https://www.ranzhi.org/download/4.9stable-133.html)、[扩展包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.ranzhi.2.1.0.zip)。
+  * 禅道：[扩展包](http://dl.cnezsoft.com/xuanxuan/2.1.0/xuanxuan.zentao.2.1.0.zip)（扩展包可以在[禅道](http://www.zentao.net/)10.0上安装使用，使得喧喧使用禅道的账户体系、后续会与禅道进行深入集成。）
+
+## v 2.0.0
+
+[2018-07-31]
+
+本次更新增加了大量实用功能，优化扩展机制，提升了使用体验。新的禅道集成扩展包使得喧喧可以使用禅道的账户体系，为后续与禅道深入集成提供了基础。
+
+### 功能预览
+
+#### 小窗口模式
+
+支持小窗口模式，同时提升浏览器端版本在 iPad 和 iPhone 上的体验。
+
+![xuanxuan2.0-mobile.gif](https://raw.githubusercontent.com/easysoft/xuanxuan/master/doc/img/xuanxuan2.0-mobile.gif)
+
+#### 快速显示和隐藏喧喧主窗口
+
+即便喧喧在后台也可以一键呼出了，处理完工作，一键隐藏。
+
+![xuanxuan2.0-shortcut.gif](https://raw.githubusercontent.com/easysoft/xuanxuan/master/doc/img/xuanxuan2.0-shortcut.gif)
+
+#### 免打扰和聊天存档
+
+将聊天设置为免打扰，或者将讨论组存档。
+
+![xuanxuan2.0-mute-and-hide.png](https://raw.githubusercontent.com/easysoft/xuanxuan/master/doc/img/xuanxuan2.0-mute-and-hide.png)
+
+### 更新明细
+
+* 新增 对小尺寸窗口的支持，浏览器端支持 PWA 模式，优化浏览器端界面交互方式；
+* 新增 Markdown 开关功能，发送消息时默认不使用 Markdown 格式发送，通过按钮开关开启 Markdown 格式功能，并提供了 Markdown 格式指南文档；
+* 新增 全局快捷键功能，用于一键隐藏和显示喧喧窗口，默认快捷键 <kbd>Ctrl+Alt+X</kbd>；
+* 新增 切换发送消息快捷键功能，可以通过个人设置面板设置或者通过发送按钮右键菜单进行切换；
+* 新增 聊天免打扰功能，将聊天设置为免打扰后，将不会在后台收到显性通知（弹窗或声音提醒）；
+* 新增 聊天存档功能（仅支持讨论组），将聊天存档后将不会在最近聊天上显示，也不会在后台收到显性通知，在讨论组列表中会在已存档分组中显示；
+* 新增 一键发送剪切板图片功能，当聊天输入框激活时如果检测到剪切板有新的图片会提示一键发送该图片；
+* 新增 复制高清 Emoji 表情符功能，在消息中的高清 Emoji 图像上点击右键进行复制操作；
+* 新增 WebView 中右键菜单操作，包括复制、粘贴、撤销等操作，支持 WebView 打开的应用页面和对话框打开的第三方网页以及 Web 卡片界面；
+* 优化 拖放发送文件功能，现在可以一次性拖放多个文件到聊天窗口进行发送；
+* 优化 Markdown 渲染机制，现在默认支持完整 Markdown 格式，并支持 GFM（GitHub Flavored Markdown）语法，允许使用一些简单的格式化 HTML 标签（例如 `<kbd>`、`<sub>`、`<mark>` 等）；
+* 优化 发送框中的链接显示，现在会高亮发送框中的链接；
+* 优化 Emoji 表情图像在 Mac 系统上的显示，移除了阴影效果；
+* 优化 联系人列表排序策略，现在在线的用户会优先显示在顶部；
+* 优化 聊天发送框交互，现在会在提示中显示当前是否支持 Markdown，当激活一个刚刚收到新消息的聊天，会自动激活发送框；
+* 优化 解析链接卡片性能，现在会启用缓存，除非用户手动刷新链接卡片；
+* 优化 全局快捷键设置体验，现在设置全局快捷键时，暂时会禁用已设置的全局快捷键，防止在设置过程中执行了相关操作，现在会禁止设置仅仅只有修饰键的快捷键组合（例如 <kbd>Ctrl+Alt</kbd>）；
+* 优化 激活窗口时自动切换到有新消息的聊天机制，现在仅仅当窗口从最小化状态还原并激活时才会切换，防止有时拖放文件到窗口时自动切换导致文件发送给非目标聊天的问题；
+* 修复 启用闪烁通知栏图标设置项在 MacOS 上没有显示的问题；
+* 修复 发送框中有时高亮 `@User` 没有生效的问题；
+* 修复 消息列表中没有可加载的消息时仍然显示“点击加载更多消息”的提示；
+* 修复 聊天图标没有即时更新的问题（将讨论组切换为公开或私密时图标应该变更）；
+* 修复 从最大化最小化窗口然后激活显示窗口时，没有还原到最大化状态的问题；
+* 修复 第一次登录后无法正常显示消息记录的问题；
+* 开发相关：
+  * 客户端：
+    * 修改了 NPM 中 `postinstall` 命令，解决了有时执行 `npm install` 出错的问题；
+    * 打包脚本（`build/build-config.js`）增加 `skipbuild` 命令行选项，用于略过最终打包操作，仅生成打包相关配置；
+    * 新作 `npm run start-hot-fast` 命令，用于启动调试客户端，但不安装 Electron 相关扩展，防止网络状况不好时安装扩展时间过长，导致长时间看不到界面；
+    * 移除了 `npm run dev` 命令；
+    * `electron-builder` 暂时冻结在 `20.4.0`；
+    * `jQuery` 现在作为可选的动态模块用于给扩展进行调用；
+    * `marked` 模块升级至 `0.4.0`；
+    * `emojione` 模块升级至 `3.1.7`；
+    * `react` 模块升级至 `16.4.1`；
+    * `webpack` 模块升级至 `4.16.1`；
+    * `$$version` 消息命令会显示更多信息，包括操作系统和平台信息；
+    * 增加 `$$dataPath` 消息命令，用于显示当前用户数据目录路径；
+  * 客户端扩展机制：
+    * 扩展可以通过定义 `target` 为 `chat.sendbox.toolbar` 的功能菜单创建器（`ContextMenuCreator`）来为发送框工具栏添加功能图标；
+    * 扩展可以通过定义 `target` 为 （`chat.menu`、`chat.toolbar`、`chat.toolbar.more`、`chat.member`） 的功能菜单创建器（`ContextMenuCreator`）来为聊天添加右键功能菜单；
+    * 扩展可以通过定义 `target` 为 `image` 的功能菜单创建器（`ContextMenuCreator`）来为图片添加右键功能菜单；
+    * 扩展可以通过定义 `target` 为 `link` 的功能菜单创建器（`ContextMenuCreator`）来为链接添加右键功能菜单；
+    * 扩展可以通过定义 `target` 为 `member` 的功能菜单创建器（`ContextMenuCreator`）来为成员添加右键功能菜单；
+    * 扩展支持通过 `urlInspectors` 将链接渲染为 WebView 卡片形式；
+  * XXD：
+    * 优化终端日志显示格式；
+    * 增加限制服务器上最大登录人数的配置项；
+    * 增加将客户端 IP 反馈给后端服务；
+  * XXB：
+    * 增加 `chat/mute` API，用于将聊天设置（或取消设置）为免打扰；
+    * 增加 `entry/visit` API，用于获取服务器端集成的应用免登录访问入口；
+    * 修复发送消息权限判断错误；
+    * 修复系统会话默认名称为英文的问题；
+
+### 下载地址
+
+* Windows 7+：[64 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.win64.setup.exe)、[64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.win64.zip.exe)、[32 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.win32.setup.exe)、[32 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.win32.zip.exe)、[64 位 Debug 安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.win64.debug.setup.exe)；
+* MacOS：[xuanxuan.2.0.0.mac.dmg](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.mac.dmg)；
+* Linux：[64 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.linux.x64.tar.gz)、[64 位（.deb）](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.linux.amd64.deb)、[64 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.linux.x64.rpm)、[32 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.linux.ia32.tar.gz)、[32 位（.deb）](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.linux.i386.deb)、[32 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.linux.ia32.rpm)；
+* 浏览器端：[xuanxuan.2.0.0.browser.zip](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.2.0.0.browser.zip)；
+* XXD Server： [windows 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.0/xxd.2.0.0.win64.zip)、[windows 32 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.0/xxd.2.0.0.win32.zip)、[mac 压缩包](http://dl.cnezsoft.com/xuanxuan/2.0/xxd.2.0.0.mac.tar.gz)、[linux 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/2.0/xxd.2.0.0.linux.x64.tar.gz)、[linux 32 位 压缩包](http://dl.cnezsoft.com/xuanxuan/2.0/xxd.2.0.0.linux.ia32.tar.gz)；
+* 服务器端：
+  * XXB 1.2：[Windows 64位一键安装包](http://dl.cnezsoft.com/xuanxuan/2.0/xxb.2.0.win_64.exe)、[Windows 32位一键安装包](http://dl.cnezsoft.com/xuanxuan/2.0/xxb.2.0.win_32.exe)、[Linux 64位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/2.0/xxb.2.0.zbox_64.tar.gz)、[Linux 32位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/2.0/xxb.2.0.zbox_32.tar.gz)、[Linux rpm安装包](http://dl.cnezsoft.com/xuanxuan/2.0/xxb-2.0-1.noarch.rpm)、[Linux deb安装包](http://dl.cnezsoft.com/xuanxuan/2.0/xxb-2.0.deb)；
+  * 然之：[4.7.0 稳定版](http://www.ranzhi.org/download/4.7.stable-127.html)、[扩展包](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.ranzhi.2.0.0.zip)。
+  * 禅道：[扩展包](http://dl.cnezsoft.com/xuanxuan/2.0/xuanxuan.zentao.2.0.0.zip)（扩展包可以在[禅道](http://www.zentao.net/)10.0上安装使用，使得喧喧使用禅道的账户体系、后续会与禅道进行深入集成。）
+
+## v 1.6.0
+
+[2018-06-29]
+
+本次更新大幅提升扩展机制功能，增加对服务器扩展应用的支持。
+
+### 更新明细
+
+* 新增 开机（操作系统启动后）自动启动功能；
+* 新增 链接消息以卡片形式显示功能，自动预获取链接页面内容，如果链接内容是图片或视频则自动显示图片或视频内容，并且可以通过扩展进行定制卡片；
+* 新增 在临时对话框中打开外部链接功能；
+* 新增 对服务器扩展应用的支持，如果所登录的服务器配置了扩展应用，则登录后自动下载并加载服务器端的扩展，当用户注销后，这些扩展也会被卸载；
+* 优化消息右键菜单，右键点击文本消息显示该消息相关菜单项，现在选中复制相关菜单项和消息菜单项进行了合并，右侧消息菜单按钮会尽量靠近消息左侧；
+* 优化 消息列表滚动条行为，防止了一些高度可变内容导致消息列表没有滚动到底部的问题；
+* 优化 向上滚动自动加载更多消息交互，防止加载内容后界面抖动；
+* 优化 扩展管理界面，扩展条目宽度参差不齐的问题；
+* 优化 邀请用户加入聊天会话和创建新聊天会话界面，从待添加联系人列表中移除了系统中已被删除的用户；
+* 优化 安装扩展体验，当需要重启并进行重启后会自动登录重启前登录的账号；
+* 优化 扩展应用标签页界面，现在会显示应用真实的标题；
+* 优化 在浏览器中打开标签页功能，现在打开的是当前浏览的页面而不总是应用首页；
+* 修复 极端情况下提示组织成员角色没有定义的错误；
+* 修复 浏览器客户端个人菜单显示“主题”菜单项；
+* 修复 用户加入讨论组后提示消息不正确的问题，其他人看到的内容都是 “我加入了讨论组”；
+* 修复 无法无法通过应用标签页右键关闭当前激活的标签页的问题；
+* 修复 调整聊天字体设置后恢复默认字体大小时消息发送者名称字体大小不正确的问题；
+* 开发相关：
+  * 客户端：
+    * Electron 版本升级到 `2.0.5`；
+    * 切换主题后会在 `<body>` 元素上添加 `data-theme` 属性，属性值为主题名称，方便扩展识别当前所使用的主题；
+    * 增加命令机制，可以通过 `URL` 格式让用户启动命令操作，拷贝代码功能已通过命令机制重构；
+    * 数据库管理模块 `dexie` 升级到 `2.0.4`；
+    * 图标库 [Material Design Icons](https://materialdesignicons.com/) 升级到 `2.4.85`；
+    * 重构打包机制，现在通过 `build-config.js` 来执行打包操作，并且可以通过参数使用不同的配置文件。
+  * 客户端扩展机制：
+    * 增加热加载选项，通过 `hot` 属性，如果设置为 `true`，扩展可以随时加载和卸载，无需重启程序；
+    * 增加 `setConfig`、`getConfig`，方便扩展读写个性化配置，并也提供了 `setUserConfig` 和 `getUserConfig` 来读写当前登录用户配置；
+    * 增加 `onReady` 接口，用于在界面加载完毕后执行相关任务；
+    * 增加 `urlInspectors` 接口定义链接解释器，用于定制链接卡片和打开链接行为；
+    * 扩展包扩展名修改为 `.zip`，当前仍然支持 `.xext` 扩展名；
+    * 增加 `commands` 接口，用于扩展定义命令操作；
+    * 增加 `preloadScript` 属性，用于为 Web 应用注入 JavaScript 代码；
+    * 增加 `contextMenuCreators` 接口，用于自定义界面上的右键菜单，目前支持文本消息右键菜单；
+    * `Xext.nodeModules` 增加 `jQuery 3` 模块。
+  * 然之相关：
+    * 修复 从低版本升级出错的问题。
+  * XXB：
+    * 增加 应用（包括扩展）管理功能（然之版本应用增加客户端扩展应用相关管理），应用支持免登录机制；
+    * 优化 `chat/usergetlist` 接口，过滤编外人员；
+    * 增加 `chat/extensions` 接口，用于向客户端发送服务器上已安装的扩展应用。
+
+### 下载地址
+
+* Windows 7+：[64 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.win64.setup.exe)、[64 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.win64.zip.exe)、[32 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.win32.setup.exe)、[32 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.win32.zip.exe)、[64 位 Debug 安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.win64.debug.setup.exe)；
+* MacOS：[xuanxuan.1.6.0.mac.dmg](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.mac.dmg)；
+* Linux：[64 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.linux.x64.tar.gz)、[64 位（.deb）](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.linux.amd64.deb)、[64 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.linux.x64.rpm)、[32 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.linux.ia32.tar.gz)、[32 位（.deb）](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.linux.i386.deb)、[32 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.linux.ia32.rpm)；
+* 浏览器端：[xuanxuan.1.6.0.browser.zip](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.1.6.0.browser.zip)；
+* XXD Server： [windows 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.6/xxd.1.6.0.win64.zip)、[windows 32 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.6/xxd.1.6.0.win32.zip)、[mac 压缩包](http://dl.cnezsoft.com/xuanxuan/1.6/xxd.1.6.0.mac.tar.gz)、[linux 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.6/xxd.1.6.0.linux.x64.tar.gz)、[linux 32 位 压缩包](http://dl.cnezsoft.com/xuanxuan/1.6/xxd.1.6.0.linux.ia32.tar.gz)；
+* 服务器端：
+  * XXB 1.2：[Windows 64位一键安装包](http://dl.cnezsoft.com/xuanxuan/1.6/xxb.1.2.win_64.exe)、[Windows 32位一键安装包](http://dl.cnezsoft.com/xuanxuan/1.6/xxb.1.2.win_32.exe)、[Linux 64位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/1.6/xxb.1.2.zbox_64.tar.gz)、[Linux 32位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/1.6/xxb.1.2.zbox_32.tar.gz)、[Linux rpm安装包](http://dl.cnezsoft.com/xuanxuan/1.6/xxb-1.2-1.noarch.rpm)、[Linux deb安装包](http://dl.cnezsoft.com/xuanxuan/1.6/xxb-1.2.deb)；
+  * 然之：[4.7.0 稳定版](http://www.ranzhi.org/download/4.7.stable-127.html)、[扩展包](http://dl.cnezsoft.com/xuanxuan/1.6/xuanxuan.ranzhi.1.6.0.zip)。
+
+
+## v 1.5.0
+
+[2018-04-26]
+
+本次更新优化了服务器性能，提升了稳定性，实现服务器与客户端账号增删改同步功能，客户端增加小喧喧作为通知中心，支持将消息创建为然之待办，实现了客户端与然之的连接，提供快捷复制代码、链接及消息功能，大幅优化界面切换流畅度，内置了更多主题，修复了社区反馈的大部分问题；
+
+### 更新明细
+
+* 增加 对服务器用户信息更新的支持，当服务器增加新的用户时或者用户更改头像、名称及联系方式时，客户端会同步进行更新；
+* 增加 小喧喧会话作为通知中心（目前支持显示然之后端上的用户通知消息）；
+* 增加 多个个性化内置主题，用户菜单上增加进入主题的快捷入口；
+* 增加 消息功能菜单，支持直接复制消息，将消息转化为待办（需要然之作为后端支持）；
+* 增加 复制代码块功能，消息中的代码块支持一键复制；
+* 增加 消息中的链接右键菜单，支持一键打开或复制链接；
+* 增加 启用/禁用扩展功能；
+* 增加 历史消息滚动查看功能，向上滚动聊天窗口中的消息，会自动加载之前的消息，直到没有更多消息可供查看；
+* 优化 系统消息外观；
+* 优化 多处下拉菜单显示位置；
+* 优化 界面交互体验，大幅提升长列表显示性能和界面切换流畅度；
+* 优化 消息发送工具栏，当服务器设置最大上传文件大小（`uploadFileSize`）为 0 时不显示文件和图片上传按钮；
+* 优化 讨论组侧边栏成员列表，不再显示系统中已删除用户；
+* 优化 讨论组分组界面，移除了多余的边距；
+* 修复 浏览器端有时无法显示图片的问题；
+* 修复 浏览器端发送图片出错的问题；
+* 修复 浏览器上无法选择聊天内容的问题；
+* 修复 打开聊天中的图片和在 Windows 上保存图片无效的问题；
+* ​修复 自动登录时快速点击登录按钮出现 `WebSocket is closed before the connection is established` 错误的问题；
+* 修复 拖放排序联系人和讨论组分组有时失效的问题；
+* 开发相关：
+  * 客户端（xxc）：
+    * 优化 ping/pong 机制，在 Electron 平台上会使用 WebSocket 自带 ping/pong 机制保持心跳（浏览器端仍然会发送 `chat/ping` 消息）；
+    * 增加 `ui.serverUrl` 配置，方便编译固定服务器版本，登录界面无需用户填写所连接的服务器地址；
+    * 增加 `exts` 配置，方便开发和编译内置扩展版本。
+  * XXD：
+    * 增加 存储，记录失败消息及离线用户；
+    * 增加 心跳检查；
+    * 增加 通知接口；
+    * 增加 用户修改资料、添加新会员后更新接口；
+    * 增加 失败消息IP和离线用户汇报功能；
+    * 修复日志记录路径的BUG；
+    * 修复 异地登录消息发送成功却提示失败的BUG；
+    * 修复 异常离线其它用户状态不更新BUG。
+  * XXB：
+    * 增加 接口白名单功能；
+    * 增加 用户资料变更检查接口；
+    * 增加 通知接口；
+    * 增加 获取离线通知接口；
+    * 增加 消息状态表，取消原离线消息存储；
+    * 通知KEY取消固定，修改为随机生成32位字符串（xxd的config文件需要自己配置后再启用）。
+  * 然之相关：
+    * 增加 用户增加、资料变更、删除动作记录；
+    * 增加 队列服务功能；
+    * 增加 待办未创建发送通知到XXC；
+    * 专业版增加过滤编外人员。
+
+### 下载地址：
+
+* Windows 7+：[64 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.win64.setup.exe)、[64 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.win64.zip.exe)、[32 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.win32.setup.exe)、[32 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.win32.zip.exe)、[64 位 Debug 安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.win64.debug.setup.exe)；
+* MacOS：[xuanxuan.1.5.0.mac.dmg](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.mac.dmg)；
+* Linux：[64 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.linux.x64.tar.gz)、[64 位（.deb）](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.linux.amd64.deb)、[64 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.linux.x64.rpm)、[32 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.linux.ia32.tar.gz)、[32 位（.deb）](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.linux.i386.deb)、[32 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.linux.ia32.rpm)；
+* 浏览器端：[xuanxuan.1.5.0.browser.zip](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.1.5.0.browser.zip)；
+* XXD Server： [windows 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.5/xxd.1.5.0.win64.zip)、[windows 32 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.5/xxd.1.5.0.win32.zip)、[mac 压缩包](http://dl.cnezsoft.com/xuanxuan/1.5/xxd.1.5.0.mac.tar.gz)、[linux 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.5/xxd.1.5.0.linux.x64.tar.gz)、[linux 32 位 压缩包](http://dl.cnezsoft.com/xuanxuan/1.5/xxd.1.5.0.linux.ia32.tar.gz)；
+* 服务器端：
+  * XXB 1.1：[Windows 64位一键安装包](http://dl.cnezsoft.com/xuanxuan/1.5/xxb.1.1.win_64.exe)、[Windows 32位一键安装包](http://dl.cnezsoft.com/xuanxuan/1.5/xxb.1.1.win_32.exe)、[Linux 64位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/1.5/xxb.1.1.zbox_64.tar.gz)、[Linux 32位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/1.5/xxb.1.1.zbox_32.tar.gz)、[Linux rpm安装包](http://dl.cnezsoft.com/xuanxuan/1.5/xxb-1.1-1.noarch.rpm)、[Linux deb安装包](http://dl.cnezsoft.com/xuanxuan/1.5/xxb-1.1.deb)；
+  * 然之：[4.6.2 稳定版](http://www.ranzhi.org/dynamic/4.6.2.stable-1115.html)、[扩展包](http://dl.cnezsoft.com/xuanxuan/1.5/xuanxuan.ranzhi.1.5.0.zip)。
+
+
+## v 1.4.0
+
+[2018-03-09]
+
+本次更新增加了对 `wss` 协议的支持，浏览器端也可以使用安全模式了，另外对多处交互细节进行了优化，修复了目前社区反馈的大部分问题。欢迎更新！
+
+### 更新明细
+
++ 新增 对 `wss` 协议的支持，当所连接的服务器版本为 `1.4.0` 及以上时会启用 `wss` 协议，增强了安全性，并且支持浏览器端安全使用模式（启用官方证书的情况下）；
++ 优化 图片和文件上传交互，现在会正确显示上传进度，当在聊天中发送图片时，在完全接收图片之前会显示一个图片实际大小的占位符，接收到图片后页面不再发生抖动了；
++ 优化 聊天会话和联系人搜索框交互，新增 `ESC` 快捷键快速清除搜索框内容，并且不再区分讨论组和联系人搜索类别（总是可以在搜索框搜索全部讨论组和联系人会话），已删除的联系人会话不在出现在搜索结果中；
++ 优化 会话侧边栏界面，移除了成员标签页标题数目显示（现在会显示在标签页详情部分）；
++ 优化 聊天发送框中高亮 `@user` 功能，现在仅对系统中存在的用户生效，非系统用户不显示高亮效果；
++ 优化 讨论组和联系人列表分组交互，现在用户分组类型和展开折叠状态会保存在个人配置中，下次打开时会还原上次的状态；
++ 优化 用户个人配置同步策略，现在更改配置后会立即同步到服务器，另外修复'关闭消息框小提示'和 '发送高清表情' 配置项更改后没有生效的问题；
++ 优化 了消息中代码的样式，提供更好的配色；
++ 优化 了创建讨论组和重命名讨论组交互，现在没有填写讨论组名称时会进行提示；
++ 优化 了聊天右键菜单，已解散的讨论组不在支持编辑分组；
++ 优化 联系人列表上分组在线信息显示，不包括联系人的分组不显示在线信息；
++ 优化 文件列表界面，已下载的文件仍然会显示下载图标；
++ 修复 在浏览器上有时操作没有响应的问题；
++ 修复 了界面上点击某些按钮出现黑色块的问题；
++ 修复 连接到部分服务器上无法修改密码的问题；
++ 修复 搜索聊天和联系人时无法手动点击搜索结果的问题；
++ 修复 图文混发时文字和图片顺序不对的问题；
++ 修复 自动登录无法工作的问题；
++ 修复 了自动重连在 Windows 上有时没有工作的问题；
++ 修复 了用户退出讨论组后，聊天侧边栏用户列表没有刷新的问题；
++ 修复 了邀请用户之后对话框没有自动关闭的问题；
++ 修复 了多次快速按截图快捷键出现多个截图窗口的问题；
++ 修复 会话列表可以选择文本的问题；
++ 修复 了无法设置某些特殊快捷键的问题，并移除了某些特殊快捷键导致程序崩溃的问题；
++ 开发相关：
+  - 客户端：
+    * 修复 了在 Windows 上执行 `npm run package` 命令提示 `PKG_ARCH is not defined` 错误的问题（[issue #22](https://github.com/easysoft/xuanxuan/issues/22)）；
+    * 优化 扩展加载机制，支持加载 `app/config/exts` 文件中配置的扩展为内部扩展；
+    * 优化 扩展配置约定，如果插件类扩展没有指定 `main` 属性，则默认为 `'index.js'`；
+    * 修复 加载插件类扩展失效的问题；
+    * 优化 信息包格式，现在会发送 `v` 字段包含客户端版本，服务器可以使用该字段了解客户端版本并做差异化处理；
+    * 优化 `$$version` 命令发送的内容，增加了服务器版本信息；
+    * 升级 了 `electron-builder` 到 `v20.4.0` 解决了 Windows 安装程序在部分电脑上崩溃的问题。
+  - XXD：
+    * 修复 有时 xxd 服务器意外停止崩溃的问题；
+    * 优化 与后端服务器通信格式，现在会在 http 请求的 headers 中包含 xxd 版本信息；
+    * 优化 了一些提示信息。
+  - 后端服务器：
+    * 增加 xxb 服务器端，可以取代然之独立运行；
+    * 优化 与 xxd 服务器通信格式，现在会在 http 请求的 headers 中包含后端服务器版本信息；
+    * 优化 `chat/getUserList` 接口，现在在返回的用户信息中会包含 `qq` 字段。
+
+### 下载地址：
+
+* Windows 7+：[64 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.win64.setup.exe)、[64 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.win64.zip.exe)、[32 位安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.win32.setup.exe)、[32 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.win32.zip.exe)、[64 位 Debug 安装包（.exe）](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.win64.debug.setup.exe)；
+* MacOS：[xuanxuan.1.4.0.mac.dmg](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.mac.dmg)；
+* Linux：[64 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.linux.x64.tar.gz)、[64 位（.deb）](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.linux.amd64.deb)、[64 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.linux.x64.rpm)、[32 位（.tar.gz）](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.linux.ia32.tar.gz)、[32 位（.deb）](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.linux.i386.deb)、[32 位（.rpm）](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.linux.ia32.rpm)；
+* 浏览器端：[xuanxuan.1.4.0.browser.zip](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan.1.4.0.browser.zip)；
+* XXD Server： [windows 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.4/xxd.1.4.0.win64.zip)、[windows 32 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.4/xxd.1.4.0.win32.zip)、[mac 压缩包](http://dl.cnezsoft.com/xuanxuan/1.4/xxd.1.4.0.mac.tar.gz)、[linux 64 位压缩包](http://dl.cnezsoft.com/xuanxuan/1.4/xxd.1.4.0.linux.x64.tar.gz)、[linux 32 位 压缩包](http://dl.cnezsoft.com/xuanxuan/1.4/xxd.1.4.0.linux.ia32.tar.gz)；
+* 服务器端：
+  * XXB 1.0：[Windows 64位一键安装包](http://dl.cnezsoft.com/xuanxuan/1.4/xxb.1.0.win_64.exe)、[Windows 32位一键安装包](http://dl.cnezsoft.com/xuanxuan/1.4/xxb.1.0.win_32.exe)、[Linux 64位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/1.4/xxb.1.0.zbox_64.tar.gz)、[Linux 32位一键安装包（Linux一键安装包必须直接解压到/opt目录下）](http://dl.cnezsoft.com/xuanxuan/1.4/xxb.1.0.zbox_32.tar.gz)、[Linux rpm安装包](http://dl.cnezsoft.com/xuanxuan/1.4/xxb-1.0-1.noarch.rpm)、[Linux deb安装包](http://dl.cnezsoft.com/xuanxuan/1.4/xxb-1.0.deb)；
+  * 然之：[4.6.1 稳定版](http://www.ranzhi.org/dynamic/4.6.1.stable-105.html)、[扩展包](http://dl.cnezsoft.com/xuanxuan/1.4/xuanxuan-ranzhi.1.4.0.zip)。
+
+
 ## v 1.3.0
 
 [2017-12-01]
@@ -98,7 +551,7 @@
   + 消息记录增加从云端同步全部消息的功能，并且在用户第一次登录到客户端时会自动在后台从云端同步所有消息记录；
   + 消息发送框内的表情符现在可以直接删除，而不是需要逐个删除短名称字符，并支持 windows 平台上显示用户通过输入法输入的表情字符；
   + 禁用了发送空白消息，当发送框没有实际可显示的内容时点击发送键会清空发送框；
-  + 优化了文件和图片上传下载交互体验，现在会显示上次下载进度；
+  + 优化了文件和图片上传下载交互体验，现在会显示上传下载进度；
   + 优化会话右侧边栏拖拽调整宽度交互方式，现在会自动保存调整后的固定宽度，而不是保存百分比；
   + 优化了应用加载前的界面，现在会显示加载进度条；
   + 表情（[Emojione](https://github.com/emojione/emojione)）图像资源更新到 3.1.2；

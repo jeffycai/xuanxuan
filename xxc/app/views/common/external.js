@@ -1,0 +1,44 @@
+import AboutDialog from './about-dialog';
+import MemberProfileDialog from './member-profile-dialog';
+import About from './about';
+import MemberProfile from './member-profile';
+import BuildInfo from './build-info';
+import Routes from './routes';
+import DraftEditor from './draft-editor';
+import StatusDot from './status-dot';
+import EmojiPopover from './emoji-popover';
+import UserAvatar from './user-avatar';
+import UserChangePasswordDialog from './user-change-password-dialog';
+import FileListItem from './file-list-item';
+import UserListItem from './user-list-item';
+import FileListView from './file-list';
+import UserProfileDialog from './user-profile-dialog';
+import HotkeySettingDialog from './hotkey-setting-dialog';
+import UserSettingDialog from './user-setting-dialog';
+import MemberListItem from './member-list-item';
+import UserSetting from './user-setting';
+import MemberList from './member-list';
+import withReplaceView from '../with-replace-view';
+
+export default {
+    get AboutDialog() {return withReplaceView(AboutDialog);},
+    get MemberProfileDialog() {return withReplaceView(MemberProfileDialog);},
+    get About() {return withReplaceView(About);},
+    get MemberProfile() {return withReplaceView(MemberProfile);},
+    get BuildInfo() {return withReplaceView(BuildInfo);},
+    get Routes() {return withReplaceView(Routes);},
+    get DraftEditor() {return withReplaceView(DraftEditor);},
+    get StatusDot() {return withReplaceView(StatusDot);},
+    get EmojiPopover() {return withReplaceView(EmojiPopover);},
+    get UserAvatar() {return withReplaceView(UserAvatar);},
+    get UserChangePasswordDialog() {return withReplaceView(UserChangePasswordDialog);},
+    get FileListItem() {return withReplaceView(FileListItem);},
+    get UserListItem() {return withReplaceView(UserListItem);},
+    get FileListView() {return withReplaceView(FileListView);},
+    get UserProfileDialog() {return withReplaceView(UserProfileDialog);},
+    get HotkeySettingDialog() {return withReplaceView(HotkeySettingDialog);},
+    get UserSettingDialog() {return withReplaceView(UserSettingDialog);},
+    get MemberListItem() {return withReplaceView(MemberListItem);},
+    get UserSetting() {return withReplaceView(UserSetting);},
+    get MemberList() {return withReplaceView(MemberList);},
+};

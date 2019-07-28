@@ -1,0 +1,18 @@
+{
+    "name": "simple-desktop",
+    "displayName": "Simple Desktop",
+    "version": "1.0.0",
+    "description": "调用 Simple Desktop，每次使用一张精心挑选的极简壁纸作为背景图。",
+    "type": "plugin",
+    "accentColor": "#111",
+    "icon": "mdi-file-presentation-box",
+    "hot": true,
+    "main": "index.js",
+    "author": {
+      "name": "Simple Desktop"
+    },
+    "publisher": "Catouse",
+    "dependencies": {
+      "unsplash-js": "^4.8.0"
+    }
+  }
